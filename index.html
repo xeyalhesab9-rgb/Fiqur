@@ -3,81 +3,80 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>3D Warzone Empire</title>
+    <title>Warzone 3D Empire</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <!-- Three.js (3D Grafik Motoru) -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Roboto, sans-serif; }
         body {
-            background: #090d16;
+            background: #0f172a;
             color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
             overflow: hidden;
             user-select: none;
         }
-        #canvas-container {
-            width: 100vw;
-            height: 65vh;
-            display: block;
+        .header-panel {
+            background: #1e293b;
+            padding: 12px 15px;
+            border-bottom: 2px solid #334155;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
-        .ui-panel {
-            height: 35vh;
-            background: #111827;
-            border-top: 2px solid #1f2937;
+        .stat-box { text-align: center; }
+        .stat-label { font-size: 10px; color: #94a3b8; text-transform: uppercase; }
+        .stat-value { font-size: 18px; font-weight: bold; color: #f59e0b; }
+
+        #gameCanvas {
+            flex: 1;
+            width: 100%;
+            height: 100%;
+            background: #090d16;
+            touch-action: none;
+        }
+
+        .controls-panel {
+            background: #1e293b;
             padding: 15px;
+            border-top: 2px solid #334155;
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
+            gap: 10px;
         }
-        .stats-bar {
-            display: flex;
-            justify-content: space-around;
-            background: #1f2937;
-            padding: 10px;
-            border-radius: 12px;
-        }
-        .stat-item { text-align: center; }
-        .stat-title { font-size: 11px; color: #9ca3af; text-transform: uppercase; }
-        .stat-value { font-size: 18px; font-weight: bold; color: #f59e0b; }
-        
-        .controls { display: flex; flex-direction: column; gap: 8px; }
         .btn {
             background: linear-gradient(135deg, #22c55e, #16a34a);
             color: #fff;
             border: none;
-            padding: 12px;
+            padding: 14px;
             font-size: 15px;
             font-weight: bold;
             border-radius: 10px;
             cursor: pointer;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
         }
         .btn:active { transform: scale(0.98); }
-        .btn-boost { background: linear-gradient(135deg, #3b82f6, #1d4ed8); }
+        .btn-boost { background: linear-gradient(135deg, #ef4444, #dc2626); }
     </style>
 </head>
 <body>
 
-    <!-- 3D Sahne Alanı -->
-    <div id="canvas-container"></div>
-
-    <!-- UI Kontrol Paneli -->
-    <div class="ui-panel">
-        <div class="stats-bar">
-            <div class="stat-item">
-                <div class="stat-title">Qızıl Balansı</div>
-                <div class="stat-value"><span id="gold">100</span> 🪙</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-title">3D Baza Səviyyəsi</div>
-                <div class="stat-value"><span id="income">0</span> /s</div>
-            </div>
+    <div class="header-panel">
+        <div class="stat-box">
+            <div class="stat-label">Balans</div>
+            <div class="stat-value"><span id="gold">100</span> 🪙</div>
         </div>
-
-        <div class="controls">
-            <button class="btn" onclick="spawn3DUnit()">📦 3D Döyüşçü Çağır (<span id="cost">50</span> Qızıl)</button>
-            <button class="btn btn-boost" onclick="addBoost()">⚡ 2x Hızlandırıcı (3D Boost)</button>
+        <div class="stat-box">
+            <div class="stat-label">Gəlir / Saniyə</div>
+            <div class="stat-value"><span id="income">0</span> ⚡</div>
         </div>
+    </div>
+
+    <canvas id="gameCanvas"></canvas>
+
+    <div class="controls-panel">
+        <button class="btn" onclick="spawnUnit()">🪖 3D Asker Çağır (<span id="cost">50</span> Qızıl)</button>
+        <button class="btn btn-boost" onclick="addBoost()">⚔️ Düşman Üssünü Yağmala (+200 Gold)</button>
     </div>
 
     <script>
@@ -87,149 +86,169 @@
         let gold = 100;
         let cost = 50;
         let selectedIndex = null;
-        let gridData = [0, 0, 0, 0, 0, 0, 0, 0, 0];
-        let meshes = [null, null, null, null, null, null, null, null, null];
+        let grid = [1, 0, 0, 0, 0, 0, 0, 0, 0];
 
-        // --- THREE.JS 3D SAHNE KURULUMU ---
-        const container = document.getElementById('canvas-container');
-        const scene = new THREE.Scene();
-        scene.background = new THREE.Color(0x090d16);
+        const canvas = document.getElementById("gameCanvas");
+        const ctx = canvas.getContext("2d");
 
-        const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
-        camera.position.set(0, 8, 7);
-        camera.lookAt(0, 0, 0);
+        function resizeCanvas() {
+            canvas.width = canvas.clientWidth;
+            canvas.height = canvas.clientHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
 
-        const renderer = new THREE.WebGLRenderer({ antialias: true });
-        renderer.setSize(container.clientWidth, container.clientHeight);
-        renderer.shadowMap.enabled = true;
-        container.appendChild(renderer.domElement);
+        // 3D Birlik Seviye Renkleri ve Simgeleri
+        const unitConfigs = {
+            1: { color: "#22c55e", topColor: "#4ade80", icon: "🪖", inc: 2 },
+            2: { color: "#3b82f6", topColor: "#60a5fa", icon: "🥷", inc: 6 },
+            3: { color: "#a855f7", topColor: "#c084fc", icon: "💥", inc: 15 },
+            4: { color: "#f59e0b", topColor: "#fbbf24", icon: "🏎️", inc: 40 },
+            5: { color: "#ef4444", topColor: "#f87171", icon: "🚁", inc: 100 }
+        };
 
-        // Işıklandırma (Lighting)
-        const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
-        scene.add(ambientLight);
+        // İzometrik 3D Çizim Fonksiyonları
+        function drawIsometricTile(x, y, size, isSelected, level) {
+            const isoX = (x - y) * (size * 0.8) + canvas.width / 2;
+            const isoY = (x + y) * (size * 0.4) + canvas.height / 3;
 
-        const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
-        dirLight.position.set(5, 10, 5);
-        dirLight.castShadow = true;
-        scene.add(dirLight);
+            // Zemin Izgarası
+            ctx.beginPath();
+            ctx.moveTo(isoX, isoY);
+            ctx.lineTo(isoX + size * 0.8, isoY + size * 0.4);
+            ctx.lineTo(isoX, isoY + size * 0.8);
+            ctx.lineTo(isoX - size * 0.8, isoY + size * 0.4);
+            ctx.closePath();
 
-        // 3D Grid (3x3 Baza Platformaları)
-        const slotsPos = [];
-        const slotGroup = new THREE.Group();
+            ctx.fillStyle = isSelected ? "#38bdf8" : "#1e293b";
+            ctx.fill();
+            ctx.strokeStyle = isSelected ? "#f0f9ff" : "#334155";
+            ctx.lineWidth = isSelected ? 3 : 1;
+            ctx.stroke();
 
-        for (let row = 0; row < 3; row++) {
-            for (let col = 0; col < 3; col++) {
-                const x = (col - 1) * 1.8;
-                const z = (row - 1) * 1.8;
-                slotsPos.push({ x, z });
+            // 3D Birlik Küpü Çizimi
+            if (level > 0) {
+                const conf = unitConfigs[level] || unitConfigs[1];
+                const h = 35 + level * 5;
+                const py = isoY - (isSelected ? 10 : 0);
 
-                // Platforma Görseli
-                const geo = new THREE.BoxGeometry(1.5, 0.2, 1.5);
-                const mat = new THREE.MeshStandardMaterial({ color: 0x1f2937, roughness: 0.5 });
-                const mesh = new THREE.Mesh(geo, mat);
-                mesh.position.set(x, -0.1, z);
-                mesh.receiveShadow = true;
-                slotGroup.add(mesh);
+                // Sol Yüzey
+                ctx.beginPath();
+                ctx.moveTo(isoX - size * 0.5, py + size * 0.3);
+                ctx.lineTo(isoX, py + size * 0.55);
+                ctx.lineTo(isoX, py + size * 0.55 - h);
+                ctx.lineTo(isoX - size * 0.5, py + size * 0.3 - h);
+                ctx.closePath();
+                ctx.fillStyle = conf.color;
+                ctx.fill();
+
+                // Sağ Yüzey
+                ctx.beginPath();
+                ctx.moveTo(isoX, py + size * 0.55);
+                ctx.lineTo(isoX + size * 0.5, py + size * 0.3);
+                ctx.lineTo(isoX + size * 0.5, py + size * 0.3 - h);
+                ctx.lineTo(isoX, py + size * 0.55 - h);
+                ctx.closePath();
+                ctx.fillStyle = conf.color;
+                ctx.fill();
+                ctx.fillStyle = "rgba(0,0,0,0.2)";
+                ctx.fill();
+
+                // Üst Yüzey
+                ctx.beginPath();
+                ctx.moveTo(isoX, py + size * 0.05 - h);
+                ctx.lineTo(isoX + size * 0.5, py + size * 0.3 - h);
+                ctx.lineTo(isoX, py + size * 0.55 - h);
+                ctx.lineTo(isoX - size * 0.5, py + size * 0.3 - h);
+                ctx.closePath();
+                ctx.fillStyle = conf.topColor;
+                ctx.fill();
+
+                // İkon ve Seviye Etiketi
+                ctx.font = "20px Arial";
+                ctx.textAlign = "center";
+                ctx.fillText(conf.icon, isoX, py + size * 0.35 - h);
+
+                ctx.font = "bold 10px Arial";
+                ctx.fillStyle = "#ffffff";
+                ctx.fillText("Lv." + level, isoX, py + size * 0.55 - h);
             }
-        }
-        scene.add(slotGroup);
 
-        // Asker Renkleri (Level Seviyelerine Göre)
-        const levelColors = [
-            0x22c55e, // Lv1: Yeşil
-            0x3b82f6, // Lv2: Mavi
-            0xa855f7, // Lv3: Mor
-            0xf59e0b, // Lv4: Turuncu
-            0xef4444  // Lv5: Kırmızı
-        ];
-
-        function create3DUnit(level, pos) {
-            const group = new THREE.Group();
-            
-            // Asker Gövdesi (Cube/Robot Tasarımı)
-            const geo = new THREE.BoxGeometry(0.8, 0.8 + (level * 0.15), 0.8);
-            const mat = new THREE.MeshStandardMaterial({ 
-                color: levelColors[(level - 1) % levelColors.length], 
-                metalness: 0.3, 
-                roughness: 0.2 
-            });
-            const body = new THREE.Mesh(geo, mat);
-            body.position.y = (0.8 + (level * 0.15)) / 2;
-            body.castShadow = true;
-            group.add(body);
-
-            group.position.set(pos.x, 0, pos.z);
-            scene.add(group);
-            return group;
+            return { isoX, isoY, size };
         }
 
-        // --- ETKİLEŞİM (3D RAYCASTING / TIKLAMA) ---
-        const raycaster = new THREE.Raycaster();
-        const mouse = new THREE.Vector2();
+        function render() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            let totalInc = 0;
 
-        window.addEventListener('click', (e) => {
-            const rect = renderer.domElement.getBoundingClientRect();
-            if (e.clientY > rect.bottom) return;
-
-            mouse.x = ((e.clientX - rect.left) / container.clientWidth) * 2 - 1;
-            mouse.y = -((e.clientY - rect.top) / container.clientHeight) * 2 + 1;
-
-            raycaster.setFromCamera(mouse, camera);
-            
-            // En yakın platformu bulma
-            let closestSlot = -1;
-            let minDist = Infinity;
-
-            slotsPos.forEach((pos, idx) => {
-                const p3d = new THREE.Vector3(pos.x, 0, pos.z);
-                const intersects = raycaster.intersectObject(slotGroup.children[idx]);
-                if (intersects.length > 0) {
-                    closestSlot = idx;
+            for (let row = 0; row < 3; row++) {
+                for (let col = 0; col < 3; col++) {
+                    const idx = row * 3 + col;
+                    const level = grid[idx];
+                    drawIsometricTile(col, row, 55, selectedIndex === idx, level);
+                    if (level > 0) totalInc += (unitConfigs[level] ? unitConfigs[level].inc : 2);
                 }
-            });
+            }
 
-            if (closestSlot !== -1) {
-                handle3DClick(closestSlot);
+            document.getElementById("gold").innerText = Math.floor(gold);
+            document.getElementById("income").innerText = totalInc;
+            document.getElementById("cost").innerText = cost;
+            return totalInc;
+        }
+
+        // Tıklama Algılama
+        canvas.addEventListener("pointerdown", (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const clickX = e.clientX - rect.left;
+            const clickY = e.clientY - rect.top;
+
+            let clickedIdx = -1;
+            let minDist = 45;
+
+            for (let row = 0; row < 3; row++) {
+                for (let col = 0; col < 3; col++) {
+                    const isoX = (col - row) * 44 + canvas.width / 2;
+                    const isoY = (col + row) * 22 + canvas.height / 3;
+                    const dist = Math.hypot(clickX - isoX, clickY - (isoY + 20));
+
+                    if (dist < minDist) {
+                        minDist = dist;
+                        clickedIdx = row * 3 + col;
+                    }
+                }
+            }
+
+            if (clickedIdx !== -1) {
+                if (selectedIndex === null) {
+                    if (grid[clickedIdx] > 0) selectedIndex = clickedIdx;
+                } else {
+                    if (selectedIndex === clickedIdx) {
+                        selectedIndex = null;
+                    } else if (grid[selectedIndex] === grid[clickedIdx] && grid[clickedIdx] > 0) {
+                        if (grid[clickedIdx] < 5) {
+                            grid[clickedIdx] += 1;
+                            grid[selectedIndex] = 0;
+                        }
+                        selectedIndex = null;
+                    } else {
+                        selectedIndex = grid[clickedIdx] > 0 ? clickedIdx : null;
+                    }
+                }
+                render();
             }
         });
 
-        function handle3DClick(idx) {
-            if (selectedIndex === null) {
-                if (gridData[idx] > 0) selectedIndex = idx;
-            } else {
-                if (selectedIndex === idx) {
-                    selectedIndex = null;
-                } else if (gridData[selectedIndex] === gridData[idx] && gridData[idx] > 0) {
-                    // 3D Birlikleri Birleştirme
-                    gridData[idx] += 1;
-                    gridData[selectedIndex] = 0;
-                    
-                    scene.remove(meshes[selectedIndex]);
-                    scene.remove(meshes[idx]);
-                    
-                    meshes[selectedIndex] = null;
-                    meshes[idx] = create3DUnit(gridData[idx], slotsPos[idx]);
-                    
-                    selectedIndex = null;
-                } else {
-                    selectedIndex = gridData[idx] > 0 ? idx : null;
-                }
-            }
-            updateUI();
-        }
-
-        function spawn3DUnit() {
-            const emptyIdx = gridData.indexOf(0);
+        function spawnUnit() {
+            const emptyIdx = grid.indexOf(0);
             if (emptyIdx === -1) {
-                alert("3D Sahada alan kalmadı!");
+                alert("Üste boş yer yok!");
                 return;
             }
             if (gold >= cost) {
                 gold -= cost;
-                gridData[emptyIdx] = 1;
-                meshes[emptyIdx] = create3DUnit(1, slotsPos[emptyIdx]);
-                cost = Math.floor(cost * 1.4);
-                updateUI();
+                grid[emptyIdx] = 1;
+                cost = Math.floor(cost * 1.35);
+                render();
             } else {
                 alert("Yetersiz altın!");
             }
@@ -237,45 +256,14 @@
 
         function addBoost() {
             gold += 200;
-            updateUI();
-        }
-
-        function updateUI() {
-            document.getElementById('gold').innerText = Math.floor(gold);
-            document.getElementById('cost').innerText = cost;
-            
-            let totalInc = 0;
-            gridData.forEach(lvl => { if (lvl > 0) totalInc += lvl * 3; });
-            document.getElementById('income').innerText = totalInc;
-        }
-
-        // Oyun Döngüsü & Animasyon
-        function animate() {
-            requestAnimationFrame(animate);
-            
-            // Askerlerin hafif dönme/nefes alma animasyonu
-            meshes.forEach((mesh, idx) => {
-                if (mesh) {
-                    mesh.rotation.y += 0.01;
-                    if (selectedIndex === idx) {
-                        mesh.position.y = Math.sin(Date.now() * 0.005) * 0.2 + 0.1;
-                    } else {
-                        mesh.position.y = 0;
-                    }
-                }
-            });
-
-            renderer.render(scene);
+            render();
         }
 
         setInterval(() => {
-            let totalInc = 0;
-            gridData.forEach(lvl => { if (lvl > 0) totalInc += lvl * 3; });
-            gold += totalInc;
-            document.getElementById('gold').innerText = Math.floor(gold);
+            gold += render();
         }, 1000);
 
-        animate();
+        render();
     </script>
 </body>
 </html>
