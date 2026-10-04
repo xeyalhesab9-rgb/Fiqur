@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Warzone 3D Empire</title>
+    <title>Warzone 3D Command</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Roboto, sans-serif; }
         body {
-            background: #0f172a;
+            background: #0b1120;
             color: #ffffff;
             display: flex;
             flex-direction: column;
@@ -16,67 +16,84 @@
             overflow: hidden;
             user-select: none;
         }
+        
+        /* Top Navigation / Stats */
         .header-panel {
-            background: #1e293b;
-            padding: 12px 15px;
+            background: linear-gradient(180deg, #1e293b, #0f172a);
+            padding: 12px 16px;
             border-bottom: 2px solid #334155;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            z-index: 10;
         }
-        .stat-box { text-align: center; }
-        .stat-label { font-size: 10px; color: #94a3b8; text-transform: uppercase; }
-        .stat-value { font-size: 18px; font-weight: bold; color: #f59e0b; }
+        .stat-card {
+            background: #1e293b;
+            padding: 6px 12px;
+            border-radius: 10px;
+            border: 1px solid #334155;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .stat-val { font-size: 16px; font-weight: bold; color: #f59e0b; }
 
+        /* Canvas Area */
         #gameCanvas {
             flex: 1;
             width: 100%;
-            height: 100%;
-            background: #090d16;
             touch-action: none;
+            background: radial-gradient(circle at center, #1e293b 0%, #0b1120 100%);
         }
 
+        /* Controls Panel */
         .controls-panel {
-            background: #1e293b;
+            background: #0f172a;
             padding: 15px;
-            border-top: 2px solid #334155;
+            border-top: 2px solid #1e293b;
             display: flex;
             flex-direction: column;
             gap: 10px;
+            z-index: 10;
         }
         .btn {
-            background: linear-gradient(135deg, #22c55e, #16a34a);
+            background: linear-gradient(135deg, #16a34a, #15803d);
             color: #fff;
             border: none;
             padding: 14px;
-            font-size: 15px;
+            font-size: 16px;
             font-weight: bold;
-            border-radius: 10px;
+            border-radius: 12px;
             cursor: pointer;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            box-shadow: 0 4px 12px rgba(22, 163, 74, 0.4);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
         }
-        .btn:active { transform: scale(0.98); }
-        .btn-boost { background: linear-gradient(135deg, #ef4444, #dc2626); }
+        .btn:active { transform: scale(0.97); }
+        .btn-attack { background: linear-gradient(135deg, #dc2626, #991b1b); box-shadow: 0 4px 12px rgba(220, 38, 38, 0.4); }
     </style>
 </head>
 <body>
 
     <div class="header-panel">
-        <div class="stat-box">
-            <div class="stat-label">Balans</div>
-            <div class="stat-value"><span id="gold">100</span> 🪙</div>
+        <div class="stat-card">
+            <span>🪙 Balans:</span>
+            <span class="stat-val" id="gold">100</span>
         </div>
-        <div class="stat-box">
-            <div class="stat-label">Gəlir / Saniyə</div>
-            <div class="stat-value"><span id="income">0</span> ⚡</div>
+        <div class="stat-card">
+            <span>⚡ Qazanc:</span>
+            <span class="stat-val" style="color: #38bdf8;" id="income">0/s</span>
         </div>
     </div>
 
     <canvas id="gameCanvas"></canvas>
 
     <div class="controls-panel">
-        <button class="btn" onclick="spawnUnit()">🪖 3D Asker Çağır (<span id="cost">50</span> Qızıl)</button>
-        <button class="btn btn-boost" onclick="addBoost()">⚔️ Düşman Üssünü Yağmala (+200 Gold)</button>
+        <button class="btn" onclick="spawnUnit()">🪖 Birlik Çağır (<span id="cost">50</span> Gold)</button>
+        <button class="btn btn-attack" onclick="attackBase()">⚔️ Düşmən Üssünə Hücum Et (+200 Gold)</button>
     </div>
 
     <script>
@@ -94,87 +111,87 @@
         function resizeCanvas() {
             canvas.width = canvas.clientWidth;
             canvas.height = canvas.clientHeight;
+            render();
         }
         window.addEventListener('resize', resizeCanvas);
-        resizeCanvas();
 
-        // 3D Birlik Seviye Renkleri ve Simgeleri
-        const unitConfigs = {
-            1: { color: "#22c55e", topColor: "#4ade80", icon: "🪖", inc: 2 },
-            2: { color: "#3b82f6", topColor: "#60a5fa", icon: "🥷", inc: 6 },
-            3: { color: "#a855f7", topColor: "#c084fc", icon: "💥", inc: 15 },
-            4: { color: "#f59e0b", topColor: "#fbbf24", icon: "🏎️", inc: 40 },
-            5: { color: "#ef4444", topColor: "#f87171", icon: "🚁", inc: 100 }
+        // Birlik Türleri ve Detayları
+        const unitTypes = {
+            1: { color: "#22c55e", darkColor: "#15803d", topColor: "#4ade80", label: "🪖 Piyada", inc: 3 },
+            2: { color: "#3b82f6", darkColor: "#1d4ed8", topColor: "#60a5fa", label: "🥷 Snayper", inc: 8 },
+            3: { color: "#a855f7", darkColor: "#7e22ce", topColor: "#c084fc", label: "💥 Ağır Birlik", inc: 20 },
+            4: { color: "#f59e0b", darkColor: "#b45309", topColor: "#fbbf24", label: "🏎️ Zirehli", inc: 50 },
+            5: { color: "#ef4444", darkColor: "#b91c1c", topColor: "#f87171", label: "🚁 Helikopter", inc: 120 }
         };
 
-        // İzometrik 3D Çizim Fonksiyonları
-        function drawIsometricTile(x, y, size, isSelected, level) {
-            const isoX = (x - y) * (size * 0.8) + canvas.width / 2;
-            const isoY = (x + y) * (size * 0.4) + canvas.height / 3;
+        function drawIsoTile(col, row, isSelected, level) {
+            // Büyük ve Ortalanmış İzometrik Koordinatlar
+            const tileSize = Math.min(canvas.width / 4.5, 80);
+            const startX = canvas.width / 2;
+            const startY = canvas.height / 2.8;
 
-            // Zemin Izgarası
+            const isoX = startX + (col - row) * (tileSize * 0.9);
+            const isoY = startY + (col + row) * (tileSize * 0.45);
+
+            // Zemin Zirvesi / Platform
             ctx.beginPath();
             ctx.moveTo(isoX, isoY);
-            ctx.lineTo(isoX + size * 0.8, isoY + size * 0.4);
-            ctx.lineTo(isoX, isoY + size * 0.8);
-            ctx.lineTo(isoX - size * 0.8, isoY + size * 0.4);
+            ctx.lineTo(isoX + tileSize * 0.9, isoY + tileSize * 0.45);
+            ctx.lineTo(isoX, isoY + tileSize * 0.9);
+            ctx.lineTo(isoX - tileSize * 0.9, isoY + tileSize * 0.45);
             ctx.closePath();
 
-            ctx.fillStyle = isSelected ? "#38bdf8" : "#1e293b";
+            ctx.fillStyle = isSelected ? "#0284c7" : "#1e293b";
             ctx.fill();
-            ctx.strokeStyle = isSelected ? "#f0f9ff" : "#334155";
-            ctx.lineWidth = isSelected ? 3 : 1;
+            ctx.strokeStyle = isSelected ? "#38bdf8" : "#475569";
+            ctx.lineWidth = isSelected ? 3 : 1.5;
             ctx.stroke();
 
-            // 3D Birlik Küpü Çizimi
+            // 3D Birlik Binası / Asker
             if (level > 0) {
-                const conf = unitConfigs[level] || unitConfigs[1];
-                const h = 35 + level * 5;
-                const py = isoY - (isSelected ? 10 : 0);
+                const conf = unitTypes[level] || unitTypes[1];
+                const h = 45 + level * 8;
+                const py = isoY - (isSelected ? 12 : 0);
 
-                // Sol Yüzey
+                // Sol Yan Yüz
                 ctx.beginPath();
-                ctx.moveTo(isoX - size * 0.5, py + size * 0.3);
-                ctx.lineTo(isoX, py + size * 0.55);
-                ctx.lineTo(isoX, py + size * 0.55 - h);
-                ctx.lineTo(isoX - size * 0.5, py + size * 0.3 - h);
+                ctx.moveTo(isoX - tileSize * 0.55, py + tileSize * 0.35);
+                ctx.lineTo(isoX, py + tileSize * 0.6);
+                ctx.lineTo(isoX, py + tileSize * 0.6 - h);
+                ctx.lineTo(isoX - tileSize * 0.55, py + tileSize * 0.35 - h);
+                ctx.closePath();
+                ctx.fillStyle = conf.darkColor;
+                ctx.fill();
+
+                // Sağ Yan Yüz
+                ctx.beginPath();
+                ctx.moveTo(isoX, py + tileSize * 0.6);
+                ctx.lineTo(isoX + tileSize * 0.55, py + tileSize * 0.35);
+                ctx.lineTo(isoX + tileSize * 0.55, py + tileSize * 0.35 - h);
+                ctx.lineTo(isoX, py + tileSize * 0.6 - h);
                 ctx.closePath();
                 ctx.fillStyle = conf.color;
                 ctx.fill();
 
-                // Sağ Yüzey
+                // Üst Tavan Yüzeyi
                 ctx.beginPath();
-                ctx.moveTo(isoX, py + size * 0.55);
-                ctx.lineTo(isoX + size * 0.5, py + size * 0.3);
-                ctx.lineTo(isoX + size * 0.5, py + size * 0.3 - h);
-                ctx.lineTo(isoX, py + size * 0.55 - h);
-                ctx.closePath();
-                ctx.fillStyle = conf.color;
-                ctx.fill();
-                ctx.fillStyle = "rgba(0,0,0,0.2)";
-                ctx.fill();
-
-                // Üst Yüzey
-                ctx.beginPath();
-                ctx.moveTo(isoX, py + size * 0.05 - h);
-                ctx.lineTo(isoX + size * 0.5, py + size * 0.3 - h);
-                ctx.lineTo(isoX, py + size * 0.55 - h);
-                ctx.lineTo(isoX - size * 0.5, py + size * 0.3 - h);
+                ctx.moveTo(isoX, py + tileSize * 0.1 - h);
+                ctx.lineTo(isoX + tileSize * 0.55, py + tileSize * 0.35 - h);
+                ctx.lineTo(isoX, py + tileSize * 0.6 - h);
+                ctx.lineTo(isoX - tileSize * 0.55, py + tileSize * 0.35 - h);
                 ctx.closePath();
                 ctx.fillStyle = conf.topColor;
                 ctx.fill();
 
-                // İkon ve Seviye Etiketi
-                ctx.font = "20px Arial";
+                // Etiket & İkon
+                ctx.font = "bold 22px Arial";
                 ctx.textAlign = "center";
-                ctx.fillText(conf.icon, isoX, py + size * 0.35 - h);
+                ctx.fillText(conf.label.split(' ')[0], isoX, py + tileSize * 0.4 - h);
 
-                ctx.font = "bold 10px Arial";
+                ctx.font = "bold 11px Arial";
                 ctx.fillStyle = "#ffffff";
-                ctx.fillText("Lv." + level, isoX, py + size * 0.55 - h);
+                ctx.fillText("Lv." + level, isoX, py + tileSize * 0.62 - h);
             }
-
-            return { isoX, isoY, size };
         }
 
         function render() {
@@ -185,31 +202,34 @@
                 for (let col = 0; col < 3; col++) {
                     const idx = row * 3 + col;
                     const level = grid[idx];
-                    drawIsometricTile(col, row, 55, selectedIndex === idx, level);
-                    if (level > 0) totalInc += (unitConfigs[level] ? unitConfigs[level].inc : 2);
+                    drawIsoTile(col, row, selectedIndex === idx, level);
+                    if (level > 0) totalInc += (unitTypes[level] ? unitTypes[level].inc : 3);
                 }
             }
 
             document.getElementById("gold").innerText = Math.floor(gold);
-            document.getElementById("income").innerText = totalInc;
+            document.getElementById("income").innerText = totalInc + "/s";
             document.getElementById("cost").innerText = cost;
             return totalInc;
         }
 
-        // Tıklama Algılama
         canvas.addEventListener("pointerdown", (e) => {
             const rect = canvas.getBoundingClientRect();
             const clickX = e.clientX - rect.left;
             const clickY = e.clientY - rect.top;
 
+            const tileSize = Math.min(canvas.width / 4.5, 80);
+            const startX = canvas.width / 2;
+            const startY = canvas.height / 2.8;
+
             let clickedIdx = -1;
-            let minDist = 45;
+            let minDist = tileSize * 0.8;
 
             for (let row = 0; row < 3; row++) {
                 for (let col = 0; col < 3; col++) {
-                    const isoX = (col - row) * 44 + canvas.width / 2;
-                    const isoY = (col + row) * 22 + canvas.height / 3;
-                    const dist = Math.hypot(clickX - isoX, clickY - (isoY + 20));
+                    const isoX = startX + (col - row) * (tileSize * 0.9);
+                    const isoY = startY + (col + row) * (tileSize * 0.45);
+                    const dist = Math.hypot(clickX - isoX, clickY - (isoY + tileSize * 0.4));
 
                     if (dist < minDist) {
                         minDist = dist;
@@ -241,7 +261,7 @@
         function spawnUnit() {
             const emptyIdx = grid.indexOf(0);
             if (emptyIdx === -1) {
-                alert("Üste boş yer yok!");
+                alert("Üstə boş yer yoxdur!");
                 return;
             }
             if (gold >= cost) {
@@ -250,12 +270,13 @@
                 cost = Math.floor(cost * 1.35);
                 render();
             } else {
-                alert("Yetersiz altın!");
+                alert("Kifayət qədər qızılınız yoxdur!");
             }
         }
 
-        function addBoost() {
+        function attackBase() {
             gold += 200;
+            alert("⚔️ Düşmən üssü yağmalandı! +200 Qızıl qazandınız.");
             render();
         }
 
@@ -263,7 +284,7 @@
             gold += render();
         }, 1000);
 
-        render();
+        setTimeout(resizeCanvas, 100);
     </script>
 </body>
 </html>
