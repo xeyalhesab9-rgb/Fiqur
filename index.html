@@ -1,532 +1,1228 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Bee Farm UI Game</title>
-    <style>
-        :root {
-            --wood-dark: #4a2a18;
-            --wood-medium: #8b5a2b;
-            --wood-light: #c68a4c;
-            --green-btn: #4caf50;
-            --blue-btn: #2196f3;
-            --yellow-accent: #ffc107;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f6f3e8">
+  <title>Honey Haven — Grow your apiary</title>
+  <meta name="description" content="Raise bees, collect honey, and grow your apiary in Honey Haven. All resources are for gameplay only.">
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            user-select: none;
-            font-family: 'Arial Rounded MT Bold', 'Segoe UI', sans-serif;
-        }
+  <style>
+    :root {
+      color-scheme: light;
+      --paper: #f6f3e8;
+      --card: #fffdf5;
+      --ink: #354435;
+      --muted: #7d8778;
+      --leaf: #6c8c50;
+      --leaf-dark: #486641;
+      --honey: #eab43d;
+      --line: #e3ddc9;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      --sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
 
-        body {
-            background-color: #7cb342;
-            background-image: radial-gradient(#8bc34a 20%, transparent 20%);
-            background-size: 16px 16px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            overflow: hidden;
-        }
+    * { box-sizing: border-box; }
 
-        .game-screen {
-            width: 100%;
-            max-width: 420px;
-            height: 100vh;
-            max-height: 880px;
-            background: linear-gradient(to bottom, #81d4fa 0%, #aed581 40%, #558b2f 100%);
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            position: relative;
-            padding: 10px;
-            box-shadow: 0 0 20px rgba(0,0,0,0.5);
-            border-radius: 12px;
-        }
+    body {
+      margin: 0;
+      min-width: 320px;
+      color: var(--ink);
+      background:
+        radial-gradient(ellipse at 12% 16%, rgba(247, 219, 143, .27), transparent 35%),
+        radial-gradient(ellipse at 88% 55%, rgba(165, 193, 132, .18), transparent 33%),
+        var(--paper);
+      font-family: var(--sans);
+    }
 
-        /* Top Bar Header */
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+    button, input { font: inherit; }
+    button { cursor: pointer; }
+    button:disabled { cursor: default; opacity: .55; }
+    [hidden] { display: none !important; }
 
-        .profile-container {
-            background: #6d4c41;
-            border: 3px solid #3e2723;
-            border-radius: 25px;
-            display: flex;
-            align-items: center;
-            padding: 2px 10px 2px 2px;
-            color: #fff;
-            position: relative;
-        }
+    .app {
+      width: min(1180px, 100%);
+      min-height: 100vh;
+      margin: 0 auto;
+      padding: 0 34px 34px;
+    }
 
-        .avatar {
-            width: 40px;
-            height: 40px;
-            background: #a1887f;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-weight: bold;
-            font-size: 20px;
-            border: 2px solid #fff;
-        }
+    .topbar {
+      min-height: 78px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      border-bottom: 1px solid rgba(64, 83, 57, .15);
+    }
 
-        .level-badge {
-            position: absolute;
-            bottom: -5px;
-            left: 12px;
-            background: #ff9800;
-            border-radius: 50%;
-            width: 18px;
-            height: 18px;
-            font-size: 11px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            border: 1px solid #fff;
-            font-weight: bold;
-        }
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 11px;
+      color: inherit;
+      text-decoration: none;
+    }
 
-        .balances {
-            display: flex;
-            flex-direction: column;
-            margin-left: 10px;
-            font-size: 13px;
-            font-weight: bold;
-        }
+    .brand-icon {
+      width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      border: 1px solid #d0ddc1;
+      border-radius: 15px;
+      background: #e5edda;
+    }
 
-        .bal-item {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
+    .brand-icon svg { width: 31px; height: 29px; }
+    .brand-name { display: block; font-size: 16px; font-weight: 700; letter-spacing: -.055em; }
+    .brand-tagline { display: block; margin-top: 3px; color: var(--muted); font-size: 10px; }
 
-        .menu-hamburger {
-            width: 40px;
-            height: 40px;
-            background: #8d6e63;
-            border: 2px solid #3e2723;
-            border-radius: 8px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            gap: 4px;
-            cursor: pointer;
-        }
+    .top-actions { display: flex; align-items: center; gap: 9px; }
 
-        .menu-hamburger div {
-            width: 22px;
-            height: 4px;
-            background: #fff;
-            border-radius: 2px;
-        }
+    .honey-balance {
+      min-height: 39px;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 0 12px;
+      border: 1px solid #e7d49e;
+      border-radius: 12px;
+      background: #fff8e3;
+      color: #765222;
+      font: 12px var(--mono);
+    }
 
-        /* Stats Section */
-        .stats-panel {
-            background: #5d4037;
-            border: 3px solid #3e2723;
-            border-radius: 15px;
-            padding: 6px 12px;
-            margin: 8px 0;
-            color: white;
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-        }
+    .honey-balance svg { width: 17px; height: 20px; }
+    .honey-balance small { color: #a68a58; font-size: 8px; letter-spacing: .08em; }
 
-        .stat-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: #4e342e;
-            padding: 5px 10px;
-            border-radius: 20px;
-        }
+    .icon-button {
+      min-width: 39px;
+      height: 39px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      padding: 0 11px;
+      border: 1px solid #d5d9c8;
+      border-radius: 12px;
+      background: #fbfaef;
+      color: #627252;
+      font-size: 11px;
+      font-weight: 600;
+    }
 
-        .btn-blue {
-            background: #1e88e5;
-            color: white;
-            border: none;
-            padding: 4px 12px;
-            border-radius: 12px;
-            font-weight: bold;
-            font-size: 12px;
-        }
+    .icon-button:hover { background: #e8efdd; }
+    .icon-button svg { width: 17px; height: 17px; }
 
-        /* Main Game Grid Container */
-        .view-section {
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            position: relative;
-        }
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.65fr) minmax(280px, .86fr);
+      gap: 26px;
+      padding-top: 27px;
+      align-items: start;
+    }
 
-        .grid-board {
-            background: #6d4c41;
-            border: 4px solid #3e2723;
-            border-radius: 15px;
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 8px;
-            padding: 10px;
-            box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
-        }
+    .main-column { min-width: 0; }
 
-        .grid-cell {
-            background: #4e342e;
-            aspect-ratio: 1;
-            border-radius: 10px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            position: relative;
-            box-shadow: inset 0 2px 5px rgba(0,0,0,0.4);
-            cursor: pointer;
-        }
+    .hero {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      margin: 0 0 18px;
+    }
 
-        .bee-img {
-            font-size: 28px;
-        }
+    .eyebrow {
+      color: #9a7937;
+      font: 8px var(--mono);
+      letter-spacing: .13em;
+      text-transform: uppercase;
+    }
 
-        .lvl-badge {
-            position: absolute;
-            bottom: 3px;
-            background: #4caf50;
-            color: white;
-            font-size: 9px;
-            padding: 1px 5px;
-            border-radius: 6px;
-            font-weight: bold;
-        }
+    h1, h2, p { margin-top: 0; }
+    .hero h1 { margin: 7px 0 3px; font-size: clamp(27px, 4vw, 34px); line-height: 1.05; letter-spacing: -.07em; }
+    .hero p { margin: 0; color: var(--muted); font-size: 11px; }
 
-        /* Side Menu Buttons */
-        .side-menu {
-            position: absolute;
-            right: -5px;
-            top: 20%;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            z-index: 10;
-        }
+    .level-badge {
+      flex: 0 0 auto;
+      width: 61px;
+      height: 61px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid #d0ddc0;
+      border-radius: 18px 18px 18px 5px;
+      background: #e5edd9;
+      color: #577247;
+      transform: rotate(3deg);
+    }
 
-        .side-btn {
-            background: rgba(255, 255, 255, 0.85);
-            border: 2px solid #8d6e63;
-            border-radius: 20px 0 0 20px;
-            padding: 5px 10px;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            font-size: 11px;
-            font-weight: bold;
-            color: #3e2723;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-            cursor: pointer;
-        }
+    .level-badge span { font: 7px var(--mono); letter-spacing: .1em; }
+    .level-badge strong { font-size: 23px; line-height: 1.05; }
 
-        /* Buy Controls */
-        .buy-panel {
-            display: flex;
-            gap: 10px;
-            margin-top: 10px;
-        }
+    .meadow {
+      position: relative;
+      height: 275px;
+      overflow: hidden;
+      isolation: isolate;
+      border: 1px solid #c6d4ad;
+      border-radius: 22px 22px 5px 22px;
+      background: linear-gradient(#b9e4dc 0%, #d8edd0 64%, #99bf76 64%, #8caf69 100%);
+      box-shadow: 0 7px 21px rgba(72, 94, 59, .08);
+    }
 
-        .buy-info {
-            background: #5d4037;
-            border: 2px solid #3e2723;
-            border-radius: 12px;
-            width: 30%;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            color: white;
-            padding: 4px;
-        }
+    .meadow::after {
+      position: absolute;
+      z-index: 8;
+      inset: 0;
+      pointer-events: none;
+      content: "";
+      opacity: .12;
+      background-image: radial-gradient(#445936 .6px, transparent .6px);
+      background-size: 7px 7px;
+    }
 
-        .buy-btn {
-            flex-grow: 1;
-            background: #4caf50;
-            border: 2px solid #2e7d32;
-            border-radius: 12px;
-            color: white;
-            font-size: 18px;
-            font-weight: bold;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            box-shadow: 0 4px #2e7d32;
-            cursor: pointer;
-        }
+    .sun {
+      position: absolute;
+      top: 28px;
+      right: 17%;
+      width: 50px;
+      height: 50px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: #ffefbb;
+      color: #edbc4e;
+      box-shadow: 0 0 0 9px rgba(255, 241, 190, .28);
+    }
 
-        .buy-btn:active {
-            box-shadow: 0 1px #2e7d32;
-            transform: translateY(3px);
-        }
+    .cloud {
+      position: absolute;
+      z-index: 1;
+      width: 82px;
+      height: 16px;
+      border-radius: 99px;
+      background: rgba(255, 255, 244, .72);
+    }
 
-        /* Apiary Jar Screen Alternative */
-        .apiary-screen {
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100%;
-        }
+    .cloud::before, .cloud::after {
+      position: absolute;
+      content: "";
+      border-radius: 50%;
+      background: inherit;
+    }
 
-        .jar-container {
-            font-size: 100px;
-            margin: 20px 0;
-            position: relative;
-        }
+    .cloud::before { width: 21px; height: 21px; top: -9px; left: 13px; }
+    .cloud::after { width: 27px; height: 24px; top: -12px; right: 12px; }
+    .cloud-one { top: 67px; left: 20%; }
+    .cloud-two { top: 99px; left: 62%; transform: scale(.72); opacity: .72; }
 
-        .sell-btn {
-            background: #2196f3;
-            color: white;
-            border: none;
-            padding: 12px 40px;
-            border-radius: 20px;
-            font-size: 16px;
-            font-weight: bold;
-            box-shadow: 0 4px #1565c0;
-            cursor: pointer;
-        }
+    .hill {
+      position: absolute;
+      left: -7%;
+      width: 115%;
+      border-radius: 50% 50% 0 0 / 25% 25% 0 0;
+    }
 
-        /* Navigation Footer */
-        .navbar {
-            display: flex;
-            justify-content: space-around;
-            background: rgba(46, 125, 50, 0.8);
-            border-radius: 15px;
-            padding: 6px 2px;
-            margin-top: 8px;
-            border: 1px solid rgba(255,255,255,0.3);
-        }
+    .hill-back { bottom: 43px; height: 105px; background: #a2c57f; transform: rotate(-2deg); }
+    .hill-front { bottom: -16px; height: 107px; background: #83ad67; transform: rotate(2deg); }
 
-        .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            color: white;
-            font-size: 10px;
-            font-weight: bold;
-            cursor: pointer;
-            opacity: 0.7;
-        }
+    .scene-label {
+      position: absolute;
+      z-index: 6;
+      top: 15px;
+      left: 16px;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      color: #527158;
+      font: 8px var(--mono);
+      letter-spacing: .1em;
+    }
 
-        .nav-item.active {
-            opacity: 1;
-            transform: scale(1.1);
-        }
+    .live-dot { width: 6px; height: 6px; border-radius: 50%; background: #719747; }
 
-        .nav-icon {
-            font-size: 20px;
-        }
-    </style>
+    .hive {
+      position: absolute;
+      z-index: 3;
+      bottom: 25px;
+      width: 78px;
+      height: 98px;
+      filter: drop-shadow(0 6px 2px rgba(59, 78, 44, .16));
+    }
+
+    .hive-left { left: 10%; transform: scale(.85) rotate(-2deg); }
+    .hive-right { right: 11%; transform: scale(1.02) rotate(2deg); }
+    .hive-roof {
+      position: absolute;
+      top: 0;
+      left: -7px;
+      width: 91px;
+      height: 18px;
+      border: 2px solid #765337;
+      border-radius: 42% 42% 5px 5px;
+      background: repeating-linear-gradient(0deg, #a4794b 0 4px, #8d643e 4px 6px);
+    }
+
+    .hive-body {
+      position: absolute;
+      top: 14px;
+      left: 1px;
+      width: 75px;
+      height: 69px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+      padding: 5px;
+      border: 2px solid #715039;
+      border-radius: 5px 5px 14px 14px;
+      background: #bc8a51;
+    }
+
+    .hive-body i {
+      height: 13px;
+      border: 1px solid #86603d;
+      border-radius: 6px;
+      background: linear-gradient(#dcad67, #c58c4e 66%, #aa7543);
+    }
+
+    .hive-entrance {
+      position: absolute;
+      z-index: 2;
+      bottom: 8px;
+      left: 31px;
+      width: 14px;
+      height: 8px;
+      border-radius: 8px 8px 3px 3px;
+      background: #654b32;
+    }
+
+    .hive-honey {
+      position: absolute;
+      right: 13px;
+      bottom: 15px;
+      width: 12px;
+      height: 12px;
+      border-radius: 50% 50% 55% 5%;
+      background: #f5c84d;
+      transform: rotate(45deg);
+      box-shadow: 0 15px #e4ae32, -8px 8px #ffd969;
+    }
+
+    .bee-float { position: absolute; z-index: 5; width: 36px; height: 33px; }
+    .bee-float.one { top: 95px; left: 30%; animation: drift 4s ease-in-out infinite; }
+    .bee-float.two { top: 134px; right: 29%; transform: scale(.78); animation: drift 4.8s ease-in-out infinite reverse; }
+
+    @keyframes drift {
+      0%, 100% { translate: 0 0; }
+      50% { translate: 6px -8px; }
+    }
+
+    .jar {
+      position: absolute;
+      z-index: 4;
+      bottom: 9px;
+      left: 50%;
+      width: 104px;
+      height: 143px;
+      overflow: hidden;
+      border: 2px solid rgba(255, 255, 226, .94);
+      border-radius: 24px 24px 28px 28px;
+      background: linear-gradient(90deg, rgba(247,255,221,.71), rgba(255,255,228,.5) 40%, rgba(218,241,207,.62));
+      box-shadow: inset 0 0 0 3px rgba(137,181,126,.22), 0 7px 0 rgba(90,122,67,.27);
+      transform: translateX(-50%);
+    }
+
+    .jar-fill {
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      min-height: 10%;
+      border-radius: 0 0 26px 26px;
+      background: linear-gradient(90deg, rgba(229,167,42,.7), rgba(255,207,75,.9), rgba(230,167,39,.65));
+      transition: height .5s ease;
+    }
+
+    .jar-fill::before {
+      position: absolute;
+      top: -5px;
+      left: -2px;
+      width: 102%;
+      height: 11px;
+      border-radius: 50%;
+      background: rgba(255, 222, 104, .95);
+      content: "";
+    }
+
+    .jar-label {
+      position: absolute;
+      z-index: 6;
+      bottom: 124px;
+      left: 50%;
+      padding: 7px 10px;
+      border: 2px solid #f0d48e;
+      border-radius: 5px 5px 9px 9px;
+      background: #7f6640;
+      color: #fff9df;
+      font-size: 9px;
+      white-space: nowrap;
+      transform: translateX(-50%) rotate(-2deg);
+    }
+
+    .harvest-card, .card {
+      border: 1px solid var(--line);
+      border-radius: 15px;
+      background: rgba(255, 253, 244, .91);
+      box-shadow: 0 3px 10px rgba(69, 81, 50, .035);
+    }
+
+    .harvest-card { margin-top: 13px; padding: 14px 15px 13px; }
+    .harvest-line { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 10px; }
+    .harvest-line strong { display: block; margin-top: 5px; color: #535f43; font: 16px var(--mono); }
+    .harvest-line strong small { color: #a5aa99; font-size: 10px; }
+    .production { color: #70835d; font: 9px var(--mono); white-space: nowrap; }
+    .progress-track { height: 5px; overflow: hidden; margin-bottom: 12px; border-radius: 10px; background: #e9e7d8; }
+    .progress-track span { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, #dfaa34, #f2cb54); }
+
+    .primary-button, .secondary-button, .small-button {
+      border: 0;
+      border-radius: 9px;
+      font-weight: 600;
+      transition: transform .15s ease, background .15s ease;
+    }
+
+    .primary-button {
+      width: 100%;
+      min-height: 43px;
+      padding: 0 13px;
+      background: var(--leaf);
+      color: #fffdf0;
+      box-shadow: inset 0 -3px rgba(50, 77, 42, .2);
+    }
+
+    .primary-button:hover:not(:disabled) { background: #587941; transform: translateY(-1px); }
+    .secondary-button { min-height: 36px; padding: 0 11px; border: 1px solid #819767; background: #718c56; color: #fffced; font-size: 10px; }
+    .secondary-button:hover:not(:disabled) { background: #5e7947; }
+    .small-button { min-height: 30px; padding: 0 10px; border: 1px solid #819767; background: #718c56; color: #fffced; font-size: 9px; }
+
+    .collect-row { display: flex; align-items: center; gap: 10px; }
+    .collect-row .primary-button { flex: 1; }
+    .collect-extra { color: #dbe8c8; font: 9px var(--mono); }
+
+    .team-section { margin-top: 22px; }
+    .section-heading { display: flex; align-items: end; justify-content: space-between; gap: 8px; margin-bottom: 11px; }
+    .section-heading h2 { margin: 5px 0 0; font-size: 17px; letter-spacing: -.05em; }
+    .section-heading h2 small { color: #9da58e; font: 10px var(--mono); }
+    .team-note { color: #829171; font-size: 9px; }
+    .bee-grid {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 8px;
+      padding: 12px;
+      border: 1px solid #d6dec6;
+      border-radius: 16px;
+      background: #e9efdf;
+    }
+
+    .bee-cell, .empty-slot {
+      min-width: 0;
+      height: 75px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid #cfdbc0;
+      border-radius: 10px;
+      background: #f9f9ed;
+    }
+
+    .bee-cell { position: relative; }
+    .bee-cell svg { width: 39px; height: 35px; }
+    .bee-level {
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      padding: 3px 1px;
+      background: #dfe9d3;
+      color: #687b51;
+      font: 7px var(--mono);
+      text-align: center;
+    }
+
+    .empty-slot { border-style: dashed; background: rgba(255,255,255,.29); color: #91a17e; }
+    .garden-footer { display: flex; justify-content: space-between; gap: 6px; padding: 10px 2px 0; color: #89927f; font: 8px var(--mono); letter-spacing: .04em; }
+
+    .bee-tip { display: flex; gap: 10px; align-items: center; margin-top: 16px; padding: 12px 2px; border-top: 1px solid rgba(85,105,68,.12); color: #738369; }
+    .tip-mark { width: 30px; height: 30px; display: grid; place-items: center; border-radius: 10px; background: #e8eedc; }
+    .bee-tip strong { display: block; font-size: 10px; }
+    .bee-tip p { margin: 3px 0 0; color: #91998a; font-size: 9px; line-height: 1.4; }
+
+    .side-column { display: grid; gap: 13px; }
+    .card { padding: 16px; }
+    .card-header { display: flex; align-items: start; justify-content: space-between; gap: 8px; }
+    .card h2 { margin: 5px 0 0; font-size: 16px; letter-spacing: -.05em; }
+    .task-count { min-width: 31px; padding: 8px 6px; border-radius: 9px; background: #e8efdd; color: #6a8052; font: 9px var(--mono); text-align: center; }
+    .task-preview-list { margin-top: 13px; }
+    .task-preview-row { display: flex; align-items: center; gap: 8px; margin-top: 11px; }
+    .task-dot { width: 22px; height: 22px; flex: 0 0 auto; display: grid; place-items: center; border-radius: 50%; background: #efeedf; color: #a7aa93; font-size: 10px; }
+    .task-dot.done { background: #deecd0; color: #527641; }
+    .task-preview-text { min-width: 0; flex: 1; }
+    .task-preview-text strong { display: block; overflow: hidden; font-size: 10px; text-overflow: ellipsis; white-space: nowrap; }
+    .task-preview-text small { display: block; margin-top: 3px; color: #999c89; font: 8px var(--mono); }
+    .text-link { margin-top: 13px; padding: 0; border: 0; background: transparent; color: #73855f; font-size: 9px; }
+
+    .upgrade-art {
+      position: relative;
+      height: 95px;
+      overflow: hidden;
+      margin: -2px -2px 13px;
+      border-radius: 12px;
+      background: linear-gradient(145deg, #e8efda, #fbebbe);
+    }
+
+    .upgrade-art::before, .upgrade-art::after { position: absolute; content: ""; border-radius: 50%; background: rgba(255,255,255,.42); }
+    .upgrade-art::before { width: 105px; height: 105px; right: -12px; top: -39px; }
+    .upgrade-art::after { width: 72px; height: 72px; left: -15px; bottom: -37px; }
+    .tiny-hive { position: absolute; left: 50%; bottom: 12px; width: 50px; height: 58px; border: 2px solid #856444; border-radius: 7px 7px 12px 12px; background: #c49257; transform: translateX(-50%); }
+    .tiny-hive i { display: block; height: 14px; margin: 5px 4px; border-radius: 7px; background: #dda966; }
+    .upgrade-sun { position: absolute; top: 13px; left: 19px; color: #d3a53c; }
+
+    .card-copy { margin: 7px 0 12px; color: #858c7c; font-size: 10px; line-height: 1.5; }
+    .price-row { display: flex; justify-content: space-between; gap: 8px; padding: 10px 0; border-top: 1px solid #ece7d4; color: #795c2e; font: 9px var(--mono); }
+    .bee-shop-title { display: flex; align-items: center; justify-content: space-between; }
+    .bee-shop-title svg { width: 39px; height: 35px; }
+
+    .game-note {
+      display: flex;
+      gap: 7px;
+      align-items: flex-start;
+      padding: 2px 4px;
+      color: #929889;
+      font-size: 9px;
+      line-height: 1.5;
+    }
+
+    .bottom-nav { display: none; }
+
+    .overlay {
+      position: fixed;
+      z-index: 20;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+      background: rgba(46, 59, 42, .34);
+      backdrop-filter: blur(4px);
+    }
+
+    .dialog {
+      width: min(700px, 100%);
+      max-height: min(88vh, 850px);
+      overflow: auto;
+      padding: 20px;
+      border: 1px solid #d9dcc6;
+      border-radius: 22px;
+      background: #fbfaef;
+      box-shadow: 0 18px 55px rgba(46, 59, 42, .2);
+    }
+
+    .dialog-header { display: flex; align-items: start; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
+    .dialog-header h2 { margin: 5px 0 0; font-size: 23px; letter-spacing: -.06em; }
+    .close-button { width: 34px; height: 34px; border: 1px solid #e2ddc9; border-radius: 50%; background: #f4f1e4; color: #6c765d; font-size: 20px; }
+    .wallet-warning { padding: 12px; border: 1px solid #e8d7a8; border-radius: 11px; background: #fff5d9; color: #806735; font-size: 10px; line-height: 1.5; }
+    .wallet-warning strong { display: block; margin-bottom: 3px; font: 9px var(--mono); letter-spacing: .1em; }
+    .wallet-balances { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; margin: 11px 0; }
+    .wallet-balance { min-width: 0; padding: 13px; border: 1px solid #e5dfc9; border-radius: 12px; background: #fffdf4; }
+    .wallet-balance.demo { background: #edf2e5; border-color: #d6e0c9; }
+    .wallet-balance span { display: block; color: #92937f; font: 8px var(--mono); letter-spacing: .06em; }
+    .wallet-balance strong { display: block; overflow-wrap: anywhere; margin-top: 7px; color: #59684b; font: 17px var(--mono); }
+    .wallet-balance small { color: #9a926f; font-size: 8px; }
+    .wallet-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
+    .wallet-action { min-width: 0; padding: 13px; border: 1px solid #e4deca; border-radius: 12px; background: #fffdf5; }
+    .wallet-action h3 { margin: 0 0 4px; color: #53634a; font-size: 12px; }
+    .wallet-action p { margin: 0 0 10px; color: #929683; font-size: 9px; line-height: 1.4; }
+    .wallet-action label { display: block; margin-bottom: 5px; color: #8d907d; font-size: 9px; }
+    .wallet-action input { width: 100%; height: 37px; padding: 0 10px; border: 1px solid #dddcc8; border-radius: 8px; outline: none; background: #fbfaef; color: #4c5d43; font: 11px var(--mono); }
+    .wallet-action input:focus { border-color: #94a87a; box-shadow: 0 0 0 3px rgba(125,151,94,.13); }
+    .wallet-action .secondary-button { width: 100%; margin-top: 9px; }
+    .wallet-quote { margin: 9px 0; color: #9a8754; font: 8px var(--mono); line-height: 1.4; }
+    .wallet-level { display: flex; justify-content: space-between; margin: 0 0 9px; color: #697f54; font: 10px var(--mono); }
+    .wallet-message { min-height: 38px; margin: 10px 0 0; padding: 10px; border-radius: 9px; background: #eff1e6; color: #718064; font-size: 9px; line-height: 1.45; }
+    .wallet-message.error { background: #f8ece1; color: #a35e43; }
+    .wallet-message.success { background: #e9f1df; color: #567548; }
+    .task-list { display: grid; gap: 9px; }
+    .task-row { display: flex; align-items: center; gap: 10px; padding: 12px; border: 1px solid #e8e4d2; border-radius: 11px; background: #fffdf5; }
+    .task-row-main { min-width: 0; flex: 1; }
+    .task-row h3 { margin: 0; font-size: 12px; }
+    .task-row p { margin: 3px 0 7px; color: #8d9382; font-size: 9px; }
+    .task-row small { color: #89937b; font: 8px var(--mono); }
+
+    .guide-content { width: min(400px, 100%); }
+    .guide-content p { color: #6e7967; font-size: 11px; line-height: 1.55; }
+    .guide-content li { margin: 9px 0; color: #6e7967; font-size: 11px; line-height: 1.5; }
+
+    footer { padding: 22px 0 8px; color: #9a9d8b; font: 8px var(--mono); letter-spacing: .08em; text-align: center; }
+
+    @media (max-width: 760px) {
+      .app { padding: 0 17px 90px; }
+      .topbar { min-height: 68px; }
+      .brand-icon { width: 38px; height: 38px; }
+      .brand-name { font-size: 14px; }
+      .brand-tagline { font-size: 9px; }
+      .top-actions { gap: 6px; }
+      .icon-button { min-width: 36px; height: 36px; padding: 0 8px; }
+      .icon-button span { display: none; }
+      .honey-balance { min-height: 36px; padding: 0 9px; font-size: 11px; }
+      .layout { display: block; padding-top: 21px; }
+      .side-column { margin-top: 18px; }
+      .bottom-nav {
+        position: fixed;
+        z-index: 15;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 4px;
+        padding: 7px 14px calc(7px + env(safe-area-inset-bottom));
+        border-top: 1px solid #dfddc8;
+        background: rgba(250, 249, 238, .95);
+        backdrop-filter: blur(12px);
+      }
+      .bottom-nav button {
+        min-height: 45px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 3px;
+        border: 0;
+        border-radius: 10px;
+        background: transparent;
+        color: #919684;
+        font-size: 9px;
+      }
+      .bottom-nav button.active { background: #e9efdf; color: #557344; }
+      .dialog { max-height: 90vh; padding: 17px; }
+    }
+
+    @media (max-width: 430px) {
+      .wallet-grid { grid-template-columns: 1fr; }
+      .meadow { height: 248px; }
+      .jar { height: 132px; }
+      .jar-label { bottom: 115px; }
+      .bee-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+      .team-note { font-size: 8px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; transition-duration: .01ms !important; }
+    }
+  </style>
 </head>
+
 <body>
+  <div class="app">
+    <header class="topbar">
+      <a class="brand" href="#" aria-label="Honey Haven home">
+        <span class="brand-icon">
+          <svg viewBox="0 0 80 70" aria-hidden="true">
+            <ellipse cx="29" cy="22" rx="14" ry="10" fill="#d6f4e7" stroke="#526a46" stroke-width="2" transform="rotate(-34 29 22)"/>
+            <ellipse cx="52" cy="20" rx="14" ry="10" fill="#d6f4e7" stroke="#526a46" stroke-width="2" transform="rotate(34 52 20)"/>
+            <ellipse cx="40" cy="42" rx="22" ry="19" fill="#ffcc48" stroke="#443c2d" stroke-width="3"/>
+            <path d="M31 26c-8 10-8 22 0 32M46 24c-6 12-6 25 0 36" stroke="#443c2d" stroke-width="7"/>
+            <circle cx="32" cy="41" r="2.6" fill="#443c2d"/><circle cx="48" cy="41" r="2.6" fill="#443c2d"/>
+            <path d="M35 50q5 5 10 0M32 21q-5-8-11-7M48 21q5-8 11-7" fill="none" stroke="#443c2d" stroke-width="2.5" stroke-linecap="round"/>
+          </svg>
+        </span>
+        <span><strong class="brand-name">Honey Haven</strong><small class="brand-tagline">a tiny hive, a big adventure</small></span>
+      </a>
 
-<div class="game-screen">
-    <!-- Header -->
-    <div class="header">
-        <div class="profile-container">
-            <div class="avatar">Y</div>
-            <div class="level-badge" id="player-lvl">3</div>
-            <div class="balances">
-                <div class="bal-item">🍯 <span id="gold-bal">150.16</span></div>
-                <div class="bal-item">💵 <span id="cash-bal">36 874.81</span></div>
+      <div class="top-actions">
+        <div class="honey-balance" aria-label="Collected game honey">
+          <svg viewBox="0 0 20 24" aria-hidden="true"><path d="M10 1C8 5 2.5 11.2 2.5 15.2a7.5 7.5 0 0 0 15 0C17.5 11.2 12 5 10 1Z" fill="#efb82f" stroke="#b77b18" stroke-width="1.4"/><path d="M6.5 15.8c.2 1.7 1.1 2.7 2.5 3.1" stroke="#fff1af" stroke-width="1.5" stroke-linecap="round"/></svg>
+          <span id="honeyBalance">54</span><small>HONEY</small>
+        </div>
+        <button class="icon-button" type="button" data-open-panel="wallet" aria-label="Open demo wallet">
+          <span>Wallet</span><b aria-hidden="true">◇</b>
+        </button>
+        <button class="icon-button" type="button" id="openGuide" aria-label="Open game guide">?</button>
+      </div>
+    </header>
+
+    <main class="layout">
+      <section class="main-column">
+        <div class="hero">
+          <div>
+            <div class="eyebrow">Slow morning, sweet harvest</div>
+            <h1>My apiary<span style="color:#d7a938">.</span></h1>
+            <p>Your bees are busy. Let the honey gather, then collect it.</p>
+          </div>
+          <div class="level-badge"><span>APIARY</span><strong id="apiaryLevel">01</strong></div>
+        </div>
+
+        <section class="meadow" aria-label="Illustrated apiary meadow">
+          <div class="sun" aria-hidden="true">✳</div>
+          <div class="cloud cloud-one"></div><div class="cloud cloud-two"></div>
+          <div class="hill hill-back"></div><div class="hill hill-front"></div>
+          <div class="scene-label"><span class="live-dot"></span> BY THE HIVES</div>
+
+          <div class="hive hive-left"><div class="hive-roof"></div><div class="hive-body"><i></i><i></i><i></i></div><div class="hive-entrance"></div></div>
+          <div class="hive hive-right"><div class="hive-roof"></div><div class="hive-body"><i></i><i></i><i></i></div><div class="hive-entrance"></div><div class="hive-honey"></div></div>
+
+          <div class="bee-float one" aria-hidden="true">
+            <svg viewBox="0 0 80 70"><ellipse cx="29" cy="22" rx="14" ry="10" fill="#d6f4e7" stroke="#526a46" stroke-width="2"/><ellipse cx="52" cy="20" rx="14" ry="10" fill="#d6f4e7" stroke="#526a46" stroke-width="2"/><ellipse cx="40" cy="42" rx="22" ry="19" fill="#ffcc48" stroke="#443c2d" stroke-width="3"/><path d="M31 26c-8 10-8 22 0 32M46 24c-6 12-6 25 0 36" stroke="#443c2d" stroke-width="7"/><circle cx="32" cy="41" r="2.6" fill="#443c2d"/><circle cx="48" cy="41" r="2.6" fill="#443c2d"/></svg>
+          </div>
+          <div class="bee-float two" aria-hidden="true">
+            <svg viewBox="0 0 80 70"><ellipse cx="29" cy="22" rx="14" ry="10" fill="#d6f4e7" stroke="#526a46" stroke-width="2"/><ellipse cx="52" cy="20" rx="14" ry="10" fill="#d6f4e7" stroke="#526a46" stroke-width="2"/><ellipse cx="40" cy="42" rx="22" ry="19" fill="#ffcc48" stroke="#443c2d" stroke-width="3"/><path d="M31 26c-8 10-8 22 0 32M46 24c-6 12-6 25 0 36" stroke="#443c2d" stroke-width="7"/><circle cx="32" cy="41" r="2.6" fill="#443c2d"/><circle cx="48" cy="41" r="2.6" fill="#443c2d"/></svg>
+          </div>
+
+          <div class="jar-label">flower honey</div>
+          <div class="jar" aria-hidden="true"><div class="jar-fill" id="jarFill"></div></div>
+        </section>
+
+        <section class="harvest-card">
+          <div class="harvest-line">
+            <div><div class="eyebrow">Honey ready in the hive</div><strong><span id="storedHoney">8</span> <small>/ <span id="storageLimit">180</span></small></strong></div>
+            <span class="production">+<span id="rate">0.06</span> / sec</span>
+          </div>
+          <div class="progress-track" aria-label="Honey storage"><span id="storageProgress" style="width:4%"></span></div>
+          <div class="collect-row">
+            <button class="primary-button" type="button" id="collectButton">Collect honey</button>
+            <span class="collect-extra" id="collectAmount">+8</span>
+          </div>
+        </section>
+
+        <section class="team-section">
+          <div class="section-heading">
+            <div><div class="eyebrow">Your team</div><h2>Bee family <small id="beeCount">2/36</small></h2></div>
+            <span class="team-note">Every bee helps</span>
+          </div>
+          <div class="bee-grid" id="beeGrid"></div>
+          <div class="garden-footer"><span><span id="footerRate">0.06</span> HONEY / SEC</span><span><span id="footerBees">2</span> hardworking bees</span></div>
+        </section>
+
+        <div class="bee-tip">
+          <span class="tip-mark" aria-hidden="true">✿</span>
+          <div><strong>Bee tip</strong><p>Collect honey before the hives fill so your bees can keep working.</p></div>
+        </div>
+      </section>
+
+      <aside class="side-column">
+        <section class="card">
+          <div class="card-header">
+            <div><div class="eyebrow">Little goals</div><h2>Today&apos;s tasks</h2></div>
+            <span class="task-count" id="taskCount">0/3</span>
+          </div>
+          <div class="task-preview-list" id="taskPreview"></div>
+          <button class="text-link" type="button" data-open-panel="tasks">See all tasks →</button>
+        </section>
+
+        <section class="card">
+          <div class="upgrade-art"><div class="upgrade-sun">✳</div><div class="tiny-hive"><i></i><i></i><i></i></div></div>
+          <div class="eyebrow">Grow your apiary</div>
+          <h2>A roomier home.</h2>
+          <p class="card-copy">Each new level stores more honey and helps your bees work more efficiently.</p>
+          <div class="price-row"><span>LEVEL <span id="nextLevel">1 → 2</span></span><strong><span id="apiaryPrice">88</span> HONEY</strong></div>
+          <button class="secondary-button" style="width:100%" type="button" id="upgradeButton">Upgrade apiary</button>
+        </section>
+
+        <section class="card">
+          <div class="bee-shop-title"><div><div class="eyebrow">A new teammate</div><h2>Add another bee.</h2></div></div>
+          <p class="card-copy">Little helpers that gather honey from flowers.</p>
+          <div class="price-row"><span>WORKER BEE</span><strong><span id="beePrice">34</span> HONEY</strong></div>
+          <button class="secondary-button" style="width:100%" type="button" id="buyBeeButton">Buy bee</button>
+        </section>
+
+        <div class="game-note">All honey is a game resource. Wallet controls are demo-only and do not move real funds.</div>
+      </aside>
+    </main>
+
+    <nav class="bottom-nav" aria-label="Game sections">
+      <button type="button" data-nav="apiary" class="active"><span aria-hidden="true">⌂</span>Apiary</button>
+      <button type="button" data-nav="tasks"><span aria-hidden="true">✓</span>Tasks</button>
+      <button type="button" data-nav="shop"><span aria-hidden="true">▦</span>Shop</button>
+      <button type="button" data-nav="wallet"><span aria-hidden="true">◇</span>Wallet</button>
+    </nav>
+
+    <footer>MAY YOUR FLOWERS BLOOM, AND YOUR HIVES FILL · YOUR LITTLE GARDEN</footer>
+  </div>
+
+  <div class="overlay" id="panelOverlay" hidden>
+    <section class="dialog" role="dialog" aria-modal="true" aria-labelledby="panelTitle">
+      <header class="dialog-header">
+        <div><div class="eyebrow" id="panelEyebrow"></div><h2 id="panelTitle"></h2></div>
+        <button class="close-button" type="button" id="closePanel" aria-label="Close">×</button>
+      </header>
+      <div id="panelBody"></div>
+    </section>
+  </div>
+
+  <div class="overlay" id="guideOverlay" hidden>
+    <section class="dialog guide-content" role="dialog" aria-modal="true" aria-labelledby="guideTitle">
+      <header class="dialog-header"><div><div class="eyebrow">A little guide</div><h2 id="guideTitle">How does your apiary work?</h2></div><button class="close-button" type="button" id="closeGuide" aria-label="Close guide">×</button></header>
+      <ul>
+        <li>Your bees slowly make honey that collects in the hive.</li>
+        <li>Collect honey to add it to your game balance.</li>
+        <li>Spend game honey on more bees and apiary upgrades.</li>
+        <li>The Wallet screen is a local demo. It does not connect to a crypto wallet.</li>
+      </ul>
+    </section>
+  </div>
+
+  <script>
+    (() => {
+      "use strict";
+
+      const SAVE_KEY = "honey-haven-game-v1";
+      const OFFLINE_CAP_MS = 8 * 60 * 60 * 1000;
+      const MAX_APIARY_LEVEL = 8;
+      const DEMO_APIARY_PRICE = 0.10;
+
+      const TASKS = [
+        { id: "first-harvest", title: "Collect your first harvest", detail: "Gather the honey your bees have made", target: 100, reward: 28 },
+        { id: "bee-family", title: "Grow your bee family", detail: "Keep four bees in your apiary", target: 4, reward: 42 },
+        { id: "new-home", title: "Build a new home", detail: "Reach apiary level 2", target: 2, reward: 36 }
+      ];
+
+      const STARTING_GAME = {
+        honey: 54,
+        storedHoney: 8,
+        lifetimeHoney: 0,
+        bees: [1, 1],
+        apiaryLevel: 1,
+        claimedTasks: [],
+        savedAt: Date.now()
+      };
+
+      let game = loadGame();
+      // This balance is intentionally in memory only and resets on reload.
+      let demoTon = 0;
+      let currentPanel = null;
+
+      const byId = (id) => document.getElementById(id);
+      const number = (value, fallback = 0) => {
+        const parsed = Number(value);
+        return Number.isFinite(parsed) ? parsed : fallback;
+      };
+      const format = (value, digits = 1) => new Intl.NumberFormat("en-US", { maximumFractionDigits: digits }).format(value);
+
+      function loadGame() {
+        let saved = null;
+        try {
+          saved = JSON.parse(localStorage.getItem(SAVE_KEY) || "null");
+        } catch {
+          saved = null;
+        }
+
+        if (!saved || !Array.isArray(saved.bees)) {
+          return { ...STARTING_GAME, bees: [...STARTING_GAME.bees], claimedTasks: [] };
+        }
+
+        const level = Math.min(MAX_APIARY_LEVEL, Math.max(1, Math.floor(number(saved.apiaryLevel, 1))));
+        const bees = saved.bees.slice(0, 36).map((beeLevel) => Math.max(1, Math.floor(number(beeLevel, 1))));
+        const clean = {
+          honey: Math.max(0, number(saved.honey)),
+          storedHoney: Math.max(0, number(saved.storedHoney)),
+          lifetimeHoney: Math.max(0, number(saved.lifetimeHoney)),
+          bees,
+          apiaryLevel: level,
+          claimedTasks: Array.isArray(saved.claimedTasks) ? saved.claimedTasks.filter((id) => typeof id === "string") : [],
+          savedAt: number(saved.savedAt, Date.now())
+        };
+
+        const awaySeconds = Math.min(OFFLINE_CAP_MS, Math.max(0, Date.now() - clean.savedAt)) / 1000;
+        clean.storedHoney = Math.min(storageLimit(level), clean.storedHoney + production(clean) * awaySeconds);
+        clean.savedAt = Date.now();
+        return clean;
+      }
+
+      function saveGame() {
+        game.savedAt = Date.now();
+        try {
+          localStorage.setItem(SAVE_KEY, JSON.stringify(game));
+        } catch {
+          // The game remains playable if browser storage is unavailable.
+        }
+      }
+
+      function storageLimit(level = game.apiaryLevel) {
+        return 180 + (level - 1) * 120;
+      }
+
+      function beePrice(count = game.bees.length) {
+        return Math.round(34 * Math.pow(1.28, Math.max(0, count - 2)));
+      }
+
+      function apiaryPrice(level = game.apiaryLevel) {
+        return Math.round(88 * Math.pow(1.62, Math.max(0, level - 1)));
+      }
+
+      function production(state = game) {
+        const base = state.bees.reduce((total, beeLevel) => total + 0.02 + beeLevel * 0.01, 0);
+        return base * (1 + (state.apiaryLevel - 1) * 0.18);
+      }
+
+      function taskProgress(task) {
+        if (task.id === "first-harvest") return Math.min(game.lifetimeHoney, task.target);
+        if (task.id === "bee-family") return Math.min(game.bees.length, task.target);
+        return Math.min(game.apiaryLevel, task.target);
+      }
+
+      function beeSvg() {
+        return `<svg viewBox="0 0 80 70" aria-hidden="true">
+          <ellipse cx="29" cy="22" rx="14" ry="10" fill="#d6f4e7" stroke="#526a46" stroke-width="2" transform="rotate(-34 29 22)"/>
+          <ellipse cx="52" cy="20" rx="14" ry="10" fill="#d6f4e7" stroke="#526a46" stroke-width="2" transform="rotate(34 52 20)"/>
+          <ellipse cx="40" cy="42" rx="22" ry="19" fill="#ffcc48" stroke="#443c2d" stroke-width="3"/>
+          <path d="M31 26c-8 10-8 22 0 32M46 24c-6 12-6 25 0 36" stroke="#443c2d" stroke-width="7"/>
+          <circle cx="32" cy="41" r="2.6" fill="#443c2d"/><circle cx="48" cy="41" r="2.6" fill="#443c2d"/>
+          <path d="M35 50q5 5 10 0" fill="none" stroke="#443c2d" stroke-width="2.5" stroke-linecap="round"/>
+        </svg>`;
+      }
+
+      function renderBeeGrid() {
+        const visibleBees = game.bees.slice(0, 12);
+        let html = visibleBees.map((level, index) =>
+          `<div class="bee-cell" aria-label="Bee level ${level}, number ${index + 1}">${beeSvg()}<span class="bee-level">LVL ${level}</span></div>`
+        ).join("");
+
+        const emptySlots = Math.min(4, Math.max(0, 12 - visibleBees.length));
+        for (let index = 0; index < emptySlots; index++) {
+          html += `<button type="button" class="empty-slot" data-action="buy-bee" aria-label="Buy another bee">＋</button>`;
+        }
+        byId("beeGrid").innerHTML = html;
+      }
+
+      function renderTaskPreview() {
+        const completed = TASKS.filter((task) => taskProgress(task) >= task.target).length;
+        byId("taskCount").textContent = `${completed}/${TASKS.length}`;
+
+        byId("taskPreview").innerHTML = TASKS.slice(0, 2).map((task) => {
+          const progress = taskProgress(task);
+          const done = progress >= task.target;
+          const claimed = game.claimedTasks.includes(task.id);
+          const status = done ? (claimed ? "Reward claimed" : "Claim your reward") : `${progress}/${task.target}`;
+          return `<div class="task-preview-row">
+            <span class="task-dot ${done ? "done" : ""}">${done ? "✓" : "•"}</span>
+            <div class="task-preview-text"><strong>${task.title}</strong><small>${status}</small></div>
+            ${done && !claimed ? `<button class="small-button" type="button" data-action="claim-task" data-task="${task.id}">+${task.reward}</button>` : ""}
+          </div>`;
+        }).join("");
+      }
+
+      function syncWalletNumbers() {
+        if (byId("walletHoney")) byId("walletHoney").textContent = format(game.honey);
+        if (byId("demoTonBalance")) byId("demoTonBalance").textContent = demoTon.toFixed(4);
+        if (byId("walletApiaryLevel")) byId("walletApiaryLevel").textContent = `${game.apiaryLevel} / ${MAX_APIARY_LEVEL}`;
+        if (byId("demoApiaryPrice")) byId("demoApiaryPrice").textContent = `${DEMO_APIARY_PRICE.toFixed(2)} Demo TON`;
+        if (byId("buyDemoApiary")) {
+          byId("buyDemoApiary").disabled = game.apiaryLevel >= MAX_APIARY_LEVEL;
+          byId("buyDemoApiary").textContent = game.apiaryLevel >= MAX_APIARY_LEVEL ? "Maximum level reached" : "Buy demo upgrade";
+        }
+      }
+
+      function render() {
+        const limit = storageLimit();
+        const rate = production();
+        const percent = Math.min(100, game.storedHoney / limit * 100);
+        const nextBee = beePrice();
+        const nextApiary = apiaryPrice();
+
+        byId("honeyBalance").textContent = format(game.honey);
+        byId("apiaryLevel").textContent = String(game.apiaryLevel).padStart(2, "0");
+        byId("storedHoney").textContent = format(game.storedHoney);
+        byId("storageLimit").textContent = format(limit, 0);
+        byId("rate").textContent = rate.toFixed(2);
+        byId("footerRate").textContent = rate.toFixed(2);
+        byId("storageProgress").style.width = `${percent}%`;
+        byId("jarFill").style.height = `${Math.max(10, percent)}%`;
+        byId("collectAmount").textContent = game.storedHoney >= 1 ? `+${Math.floor(game.storedHoney)}` : "bees are working";
+        byId("collectButton").disabled = game.storedHoney < 1;
+
+        byId("beeCount").textContent = `${game.bees.length}/36`;
+        byId("footerBees").textContent = String(game.bees.length);
+        byId("apiaryPrice").textContent = String(nextApiary);
+        byId("beePrice").textContent = String(nextBee);
+        byId("nextLevel").textContent = game.apiaryLevel >= MAX_APIARY_LEVEL ? "MAX LEVEL" : `${game.apiaryLevel} → ${game.apiaryLevel + 1}`;
+
+        byId("upgradeButton").disabled = game.honey < nextApiary || game.apiaryLevel >= MAX_APIARY_LEVEL;
+        byId("upgradeButton").textContent = game.apiaryLevel >= MAX_APIARY_LEVEL ? "Maximum level reached" : "Upgrade apiary";
+        byId("buyBeeButton").disabled = game.honey < nextBee || game.bees.length >= 36;
+
+        renderBeeGrid();
+        renderTaskPreview();
+        syncWalletNumbers();
+        saveGame();
+      }
+
+      function collectHoney() {
+        const amount = Math.floor(game.storedHoney * 10) / 10;
+        if (amount < 0.1) return;
+        game.honey += amount;
+        game.lifetimeHoney += amount;
+        game.storedHoney = 0;
+        render();
+      }
+
+      function buyBee() {
+        const price = beePrice();
+        if (game.honey < price || game.bees.length >= 36) return;
+        game.honey -= price;
+        game.bees.push(1);
+        render();
+      }
+
+      function upgradeApiary() {
+        const price = apiaryPrice();
+        if (game.honey < price || game.apiaryLevel >= MAX_APIARY_LEVEL) return;
+        game.honey -= price;
+        game.apiaryLevel += 1;
+        render();
+      }
+
+      function claimTask(taskId) {
+        const task = TASKS.find((item) => item.id === taskId);
+        if (!task || game.claimedTasks.includes(taskId) || taskProgress(task) < task.target) return;
+        game.honey += task.reward;
+        game.claimedTasks.push(taskId);
+        render();
+      }
+
+      function walletPanelMarkup() {
+        return `
+          <div class="wallet-warning">
+            <strong>DEMO ONLY — NO REAL TON</strong>
+            This is a local game simulation. It does not connect to a wallet or blockchain, and it cannot send, receive, or exchange real cryptocurrency. Demo TON resets when you reload.
+          </div>
+          <div class="wallet-balances">
+            <div class="wallet-balance"><span>COLLECTED GAME HONEY</span><strong><span id="walletHoney">0</span> <small>HONEY</small></strong></div>
+            <div class="wallet-balance demo"><span>LOCAL DEMO BALANCE</span><strong><span id="demoTonBalance">0.0000</span> <small>DEMO TON</small></strong></div>
+          </div>
+          <div class="wallet-level"><span>YOUR APIARY LEVEL</span><strong id="walletApiaryLevel">1 / 8</strong></div>
+          <div class="wallet-grid">
+            <form class="wallet-action" id="demoDepositForm">
+              <h3>Demo deposit</h3>
+              <p>Add fictional Demo TON to the local balance. No funds are received.</p>
+              <label for="depositAmount">Amount in Demo TON</label>
+              <input id="depositAmount" name="amount" type="number" min="0.0001" step="0.0001" required placeholder="0.0000">
+              <button class="secondary-button" type="submit">Add demo balance</button>
+            </form>
+            <form class="wallet-action" id="demoWithdrawForm">
+              <h3>Demo withdrawal</h3>
+              <p>Remove fictional Demo TON from the local balance. Nothing is sent.</p>
+              <label for="withdrawAmount">Amount in Demo TON</label>
+              <input id="withdrawAmount" name="amount" type="number" min="0.0001" step="0.0001" required placeholder="0.0000">
+              <button class="secondary-button" type="submit">Withdraw demo balance</button>
+            </form>
+            <form class="wallet-action" id="demoSwapForm">
+              <h3>Honey swap</h3>
+              <p>Convert collected game honey into fictional Demo TON for this preview.</p>
+              <label for="swapAmount">Collected honey amount</label>
+              <input id="swapAmount" name="amount" type="number" min="100" step="100" required placeholder="100">
+              <div class="wallet-quote">UI-only sample: 100 honey = 0.01 Demo TON</div>
+              <button class="secondary-button" type="submit">Swap in demo</button>
+            </form>
+            <section class="wallet-action">
+              <h3>Demo apiary upgrade</h3>
+              <p>Use fictional Demo TON to increase your apiary level.</p>
+              <div class="wallet-level"><span>LEVEL</span><strong id="walletApiaryLevelCard">1 / 8</strong></div>
+              <div class="wallet-quote">Fixed demo price: <strong id="demoApiaryPrice">0.10 Demo TON</strong></div>
+              <button class="secondary-button" type="button" id="buyDemoApiary">Buy demo upgrade</button>
+            </section>
+          </div>
+          <p class="wallet-message" id="walletMessage" role="status" aria-live="polite">Demo-only controls are ready. No real transaction occurred.</p>
+        `;
+      }
+
+      function setWalletMessage(message, kind = "") {
+        const output = byId("walletMessage");
+        if (!output) return;
+        output.className = `wallet-message ${kind}`;
+        output.textContent = `${message} No real transaction occurred.`;
+      }
+
+      function openPanel(panelName) {
+        currentPanel = panelName;
+        const overlay = byId("panelOverlay");
+        const body = byId("panelBody");
+        const eyebrow = byId("panelEyebrow");
+        const title = byId("panelTitle");
+
+        if (panelName === "wallet") {
+          eyebrow.textContent = "DEMO ONLY · NO REAL TON";
+          title.textContent = "Demo wallet";
+          body.innerHTML = walletPanelMarkup();
+          syncWalletNumbers();
+        } else if (panelName === "shop") {
+          eyebrow.textContent = "APIARY SUPPLIES";
+          title.textContent = "Little shop";
+          body.innerHTML = `
+            <p class="card-copy">Spend game honey to grow your apiary.</p>
+            <div class="task-list">
+              <article class="task-row"><div class="task-row-main"><h3>Worker bee</h3><p>Add one bee to your team.</p><small>${beePrice()} HONEY</small></div><button class="secondary-button" type="button" data-action="buy-bee">Buy bee</button></article>
+              <article class="task-row"><div class="task-row-main"><h3>Roomier apiary</h3><p>Increase storage and productivity.</p><small>${apiaryPrice()} HONEY</small></div><button class="secondary-button" type="button" data-action="upgrade-apiary">Upgrade</button></article>
             </div>
-        </div>
-        <div class="menu-hamburger">
-            <div></div>
-            <div></div>
-            <div></div>
-        </div>
-    </div>
+            <p class="wallet-message">Shop purchases use game honey only. They are not crypto transactions.</p>
+          `;
+        } else {
+          eyebrow.textContent = "ONE STEP AT A TIME";
+          title.textContent = "Today’s tasks";
+          body.innerHTML = `<div class="task-list">${TASKS.map((task, index) => {
+            const progress = taskProgress(task);
+            const done = progress >= task.target;
+            const claimed = game.claimedTasks.includes(task.id);
+            return `<article class="task-row">
+              <div class="task-row-main"><h3>${String(index + 1).padStart(2, "0")} · ${task.title}</h3><p>${task.detail}</p><small>${progress}/${task.target} · Reward: ${task.reward} honey</small></div>
+              ${done ? `<button class="secondary-button" type="button" data-action="claim-task" data-task="${task.id}" ${claimed ? "disabled" : ""}>${claimed ? "Claimed" : `+${task.reward} honey`}</button>` : `<span class="task-count">Locked</span>`}
+            </article>`;
+          }).join("")}</div>`;
+        }
 
-    <!-- Production Stats -->
-    <div class="stats-panel">
-        <div class="stat-row">
-            <button class="btn-blue">Level</button>
-            <span style="font-weight: bold;" id="level-percent">5.00%</span>
-        </div>
-        <div class="stat-row">
-            <button class="btn-blue" style="background:#ff9800;">Production</button>
-            <span style="font-weight: bold;">💧 <span id="prod-rate">452.0000</span> /hour</span>
-        </div>
-    </div>
-
-    <!-- MAIN VIEW AREA -->
-    <div class="view-section">
-        <!-- Side Floating Buttons -->
-        <div class="side-menu">
-            <div class="side-btn" onclick="alert('Calculator opened!')">🧮 Calculator</div>
-            <div class="side-btn" onclick="alert('Roulette spin!')">🎡 Roulette</div>
-            <div class="side-btn" onclick="alert('Tasks list!')">📋 Tasks</div>
-            <div class="side-btn" onclick="alert('Exchange menu!')">🔄 Exchanger</div>
-            <div class="side-btn" onclick="alert('Withdrawal menu!')">👛 Withdrawal</div>
-        </div>
-
-        <!-- 1. Game Grid Screen -->
-        <div id="game-view" style="display: flex; flex-direction: column;">
-            <div class="grid-board" id="grid-container">
-                <!-- 16 Cells will be generated by JS -->
-            </div>
-
-            <div class="buy-panel">
-                <div class="buy-info">
-                    <span style="font-size: 20px;">🐝</span>
-                    <span style="font-size: 10px; color: #ccc;" id="next-bee-lvl">1 LVL</span>
-                </div>
-                <button class="buy-btn" onclick="buyBee()">Buy bee (💵 <span id="bee-price">100</span>)</button>
-            </div>
-        </div>
-
-        <!-- 2. Apiary Screen -->
-        <div id="apiary-view" class="apiary-screen">
-            <div class="jar-container">🫙</div>
-            <div style="background: rgba(0,0,0,0.5); color:white; padding: 5px 15px; border-radius: 10px; margin-bottom: 10px;">
-                <span id="honey-collected">400.00</span> / 250 000
-            </div>
-            <button class="sell-btn" onclick="sellHoney()">Sell honey</button>
-        </div>
-    </div>
-
-    <!-- Bottom Navigation Bar -->
-    <div class="navbar">
-        <div class="nav-item" onclick="switchTab('friends')">
-            <span class="nav-icon">👥</span>
-            <span>Friends</span>
-        </div>
-        <div class="nav-item" onclick="switchTab('apiary')">
-            <span class="nav-icon">🪵</span>
-            <span>Apiary</span>
-        </div>
-        <div class="nav-item active" id="nav-game" onclick="switchTab('game')">
-            <span class="nav-icon">🐝</span>
-            <span>Game</span>
-        </div>
-        <div class="nav-item" onclick="switchTab('shop')">
-            <span class="nav-icon">🏪</span>
-            <span>Shop</span>
-        </div>
-        <div class="nav-item" onclick="switchTab('menu')">
-            <span class="nav-icon">🎛️</span>
-            <span>Menu</span>
-        </div>
-    </div>
-</div>
-
-<script>
-    // Game State
-    let cash = 36874.81;
-    let gold = 150.16;
-    let beePrice = 100;
-    let gridData = Array(16).fill(null);
-    let honeyStorage = 400.00;
-
-    // Default setup matching screenshot
-    gridData[0] = 7;
-    gridData[1] = 6;
-    gridData[2] = 5;
-    gridData[3] = 2;
-    gridData[12] = 10;
-
-    function renderGrid() {
-        const container = document.getElementById('grid-container');
-        container.innerHTML = '';
-        
-        gridData.forEach((lvl, index) => {
-            const cell = document.createElement('div');
-            cell.className = 'grid-cell';
-            cell.onclick = () => onCellClick(index);
-
-            if (lvl !== null) {
-                cell.innerHTML = `
-                    <div class="bee-img">🐝</div>
-                    <div class="lvl-badge">${lvl} LVL</div>
-                `;
-            }
-            container.appendChild(cell);
+        overlay.hidden = false;
+        document.body.style.overflow = "hidden";
+        document.querySelectorAll("[data-nav]").forEach((button) => {
+          button.classList.toggle("active", button.dataset.nav === panelName);
         });
+      }
 
-        // Calculate production rate based on levels
-        let totalProd = gridData.reduce((acc, curr) => acc + (curr ? curr * 45 : 0), 0);
-        document.getElementById('prod-rate').innerText = totalProd.toFixed(4);
-    }
+      function closePanel() {
+        byId("panelOverlay").hidden = true;
+        document.body.style.overflow = "";
+        currentPanel = null;
+        document.querySelectorAll("[data-nav]").forEach((button) => {
+          button.classList.toggle("active", button.dataset.nav === "apiary");
+        });
+      }
 
-    function buyBee() {
-        if (cash >= beePrice) {
-            let emptyIndex = gridData.findIndex(slot => slot === null);
-            if (emptyIndex !== -1) {
-                cash -= beePrice;
-                gridData[emptyIndex] = 1; // Add Level 1 bee
-                beePrice = Math.floor(beePrice * 1.15); // Increase price
-                updateUI();
-                renderGrid();
-            } else {
-                alert("Grid is full!");
-            }
-        } else {
-            alert("Not enough Cash!");
+      byId("collectButton").addEventListener("click", collectHoney);
+      byId("buyBeeButton").addEventListener("click", buyBee);
+      byId("upgradeButton").addEventListener("click", upgradeApiary);
+
+      byId("beeGrid").addEventListener("click", (event) => {
+        if (event.target.closest('[data-action="buy-bee"]')) buyBee();
+      });
+
+      document.querySelectorAll("[data-open-panel]").forEach((button) => {
+        button.addEventListener("click", () => openPanel(button.dataset.openPanel));
+      });
+
+      document.querySelectorAll("[data-nav]").forEach((button) => {
+        button.addEventListener("click", () => {
+          const destination = button.dataset.nav;
+          if (destination === "apiary") closePanel();
+          else openPanel(destination);
+        });
+      });
+
+      byId("panelBody").addEventListener("click", (event) => {
+        const button = event.target.closest("[data-action]");
+        if (!button) return;
+
+        if (button.dataset.action === "buy-bee") {
+          buyBee();
+          openPanel("shop");
+        } else if (button.dataset.action === "upgrade-apiary") {
+          upgradeApiary();
+          openPanel("shop");
+        } else if (button.dataset.action === "claim-task") {
+          claimTask(button.dataset.task);
+          openPanel("tasks");
+        } else if (button.dataset.action === "buy-demo-apiary") {
+          if (game.apiaryLevel >= MAX_APIARY_LEVEL) {
+            setWalletMessage("Your apiary is already at its maximum level.", "error");
+          } else if (demoTon < DEMO_APIARY_PRICE) {
+            setWalletMessage("You need more Demo TON for this demo upgrade.", "error");
+          } else {
+            demoTon = Math.round((demoTon - DEMO_APIARY_PRICE) * 10000) / 10000;
+            game.apiaryLevel += 1;
+            render();
+            setWalletMessage(`Demo apiary upgrade completed. Your apiary is now level ${game.apiaryLevel}.`, "success");
+          }
         }
-    }
+      });
 
-    function onCellClick(index) {
-        // Upgrade bee logic on click
-        if (gridData[index] !== null) {
-            gridData[index] += 1;
-            renderGrid();
+      byId("panelBody").addEventListener("submit", (event) => {
+        const form = event.target;
+        if (!(form instanceof HTMLFormElement)) return;
+        event.preventDefault();
+
+        const amount = Number(new FormData(form).get("amount"));
+        if (!Number.isFinite(amount) || amount <= 0) {
+          setWalletMessage("Enter an amount greater than zero.", "error");
+          return;
         }
-    }
 
-    function updateUI() {
-        document.getElementById('cash-bal').innerText = cash.toFixed(2);
-        document.getElementById('gold-bal').innerText = gold.toFixed(2);
-        document.getElementById('bee-price').innerText = beePrice;
-        document.getElementById('honey-collected').innerText = honeyStorage.toFixed(2);
-    }
-
-    function switchTab(tabName) {
-        document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-        
-        if (tabName === 'game') {
-            document.getElementById('game-view').style.display = 'flex';
-            document.getElementById('apiary-view').style.display = 'none';
-            document.getElementById('nav-game').classList.add('active');
-        } else if (tabName === 'apiary') {
-            document.getElementById('game-view').style.display = 'none';
-            document.getElementById('apiary-view').style.display = 'flex';
-            event.currentTarget.classList.add('active');
-        } else {
-            alert(tabName.toUpperCase() + ' section coming soon!');
+        if (form.id === "demoDepositForm") {
+          demoTon = Math.round((demoTon + amount) * 10000) / 10000;
+          form.reset();
+          render();
+          setWalletMessage("Demo deposit added to the local balance.", "success");
+        } else if (form.id === "demoWithdrawForm") {
+          if (amount > demoTon) {
+            setWalletMessage("That amount is greater than your Demo TON balance.", "error");
+            return;
+          }
+          demoTon = Math.round((demoTon - amount) * 10000) / 10000;
+          form.reset();
+          render();
+          setWalletMessage("Demo withdrawal preview completed.", "success");
+        } else if (form.id === "demoSwapForm") {
+          if (amount < 100) {
+            setWalletMessage("Enter at least 100 honey for this demo swap.", "error");
+            return;
+          }
+          if (amount > game.honey) {
+            setWalletMessage("You do not have enough collected game honey.", "error");
+            return;
+          }
+          const received = amount / 10000;
+          game.honey -= amount;
+          demoTon = Math.round((demoTon + received) * 10000) / 10000;
+          form.reset();
+          render();
+          setWalletMessage(`${format(amount)} game honey swapped for ${received.toFixed(4)} Demo TON at the sample rate.`, "success");
         }
-    }
+      });
 
-    function sellHoney() {
-        if (honeyStorage > 0) {
-            gold += honeyStorage / 10;
-            alert(`Sold honey for ${honeyStorage / 10} Gold!`);
-            honeyStorage = 0;
-            updateUI();
+      byId("panelOverlay").addEventListener("click", (event) => {
+        if (event.target === byId("panelOverlay")) closePanel();
+      });
+      byId("closePanel").addEventListener("click", closePanel);
+
+      byId("openGuide").addEventListener("click", () => {
+        byId("guideOverlay").hidden = false;
+        document.body.style.overflow = "hidden";
+      });
+      byId("closeGuide").addEventListener("click", () => {
+        byId("guideOverlay").hidden = true;
+        document.body.style.overflow = "";
+      });
+      byId("guideOverlay").addEventListener("click", (event) => {
+        if (event.target === byId("guideOverlay")) {
+          byId("guideOverlay").hidden = true;
+          document.body.style.overflow = "";
         }
-    }
+      });
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") {
+          closePanel();
+          byId("guideOverlay").hidden = true;
+          document.body.style.overflow = "";
+        }
+      });
 
-    // Initialize
-    renderGrid();
-    updateUI();
-</script>
-
+      render();
+      window.setInterval(() => {
+        const rate = production();
+        game.storedHoney = Math.min(storageLimit(), game.storedHoney + rate);
+        render();
+      }, 1000);
+    })();
+  </script>
 </body>
 </html>
+```
