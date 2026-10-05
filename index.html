@@ -2,597 +2,636 @@
 <html lang="az">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>MonsterLand</title>
 
-<script src="https://telegram.org/js/telegram-web-app.js"></script>
-
 <style>
-*{
-  box-sizing:border-box;
-}
+*{box-sizing:border-box}
 
 body{
-  margin:0;
-  font-family:Arial,sans-serif;
-  background:#8bdcff;
-  color:#294d80;
-  overflow-x:hidden;
+    margin:0;
+    font-family:Arial,sans-serif;
+    background:#8bdcff;
+    color:#294d80;
 }
 
 button{
-  border:0;
-  cursor:pointer;
-  font:inherit;
+    border:0;
+    cursor:pointer;
+    font:inherit;
 }
 
 .app{
-  min-height:100vh;
-  position:relative;
-  overflow:hidden;
-  background:
-    linear-gradient(
-      #8bdcff 0%,
-      #c9f0ff 43%,
-      #79c969 44%,
-      #91d875 100%
+    min-height:100vh;
+    background:linear-gradient(
+        #8bdcff 0%,
+        #c9f0ff 43%,
+        #79c969 44%,
+        #91d875 100%
     );
+    position:relative;
+    overflow:hidden;
 }
 
 /* TOP */
 
 .topbar{
-  position:relative;
-  z-index:10;
-  width:94%;
-  height:70px;
-  margin:12px auto;
-  padding:8px 18px;
-  display:flex;
-  align-items:center;
-  gap:14px;
-  background:white;
-  border-radius:36px;
-  box-shadow:0 5px 20px #477a9925;
+    width:94%;
+    height:70px;
+    margin:12px auto;
+    padding:8px 18px;
+    display:flex;
+    align-items:center;
+    gap:14px;
+    background:white;
+    border-radius:36px;
+    box-shadow:0 5px 20px #477a9925;
 }
 
 .logo{
-  font-size:30px;
-  font-weight:900;
-  color:#168bd5;
-  text-shadow:2px 3px white,3px 4px #274477;
+    font-size:30px;
+    font-weight:900;
+    color:#168bd5;
+    text-shadow:2px 3px white,3px 4px #274477;
 }
 
 .logo span{
-  color:#ffc928;
+    color:#ffc928;
 }
 
 .resource{
-  height:48px;
-  padding:5px 10px;
-  display:flex;
-  align-items:center;
-  gap:8px;
-  background:white;
-  border-radius:26px;
-  box-shadow:inset 0 0 0 1px #e4edf6;
+    height:48px;
+    padding:5px 10px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+    background:white;
+    border-radius:26px;
+    box-shadow:inset 0 0 0 1px #e4edf6;
 }
 
 .resource .icon{
-  font-size:27px;
+    font-size:27px;
 }
 
 .resource strong{
-  font-size:17px;
+    font-size:17px;
 }
 
 .plus{
-  width:30px;
-  height:30px;
-  border-radius:50%;
-  background:#54ca6d;
-  color:white;
-  font-size:23px;
+    width:30px;
+    height:30px;
+    border-radius:50%;
+    background:#54ca6d;
+    color:white;
+    font-size:23px;
 }
 
 .space{
-  flex:1;
+    flex:1;
 }
 
 .avatar{
-  width:43px;
-  height:43px;
-  border-radius:50%;
-  background:#dce6f1;
-  display:grid;
-  place-items:center;
-  font-size:23px;
+    width:43px;
+    height:43px;
+    border-radius:50%;
+    background:#dce6f1;
+    display:grid;
+    place-items:center;
+    font-size:23px;
 }
 
 .settings{
-  background:none;
-  font-size:27px;
+    background:none;
+    font-size:27px;
 }
 
 /* LEFT */
 
 .left{
-  position:absolute;
-  z-index:8;
-  top:105px;
-  left:3%;
-  width:230px;
+    position:absolute;
+    top:105px;
+    left:3%;
+    width:230px;
 }
 
 .player{
-  padding:15px;
-  display:flex;
-  gap:12px;
-  align-items:center;
-  background:white;
-  border-radius:25px;
-  box-shadow:0 5px 18px #477a9925;
+    padding:15px;
+    display:flex;
+    gap:12px;
+    align-items:center;
+    background:white;
+    border-radius:25px;
+    box-shadow:0 5px 18px #477a9925;
 }
 
 .petmini{
-  width:65px;
-  height:65px;
-  border-radius:50%;
-  background:#b8efff;
-  display:grid;
-  place-items:center;
-  font-size:43px;
+    width:65px;
+    height:65px;
+    border-radius:50%;
+    background:#b8efff;
+    display:grid;
+    place-items:center;
+    font-size:43px;
 }
 
 .xp{
-  width:130px;
-  height:9px;
-  margin-top:7px;
-  background:#d8e1ee;
-  border-radius:10px;
-  overflow:hidden;
+    width:130px;
+    height:9px;
+    margin-top:7px;
+    background:#d8e1ee;
+    border-radius:10px;
+    overflow:hidden;
 }
 
 .xp span{
-  display:block;
-  width:40%;
-  height:100%;
-  background:#5dcc4e;
+    display:block;
+    width:40%;
+    height:100%;
+    background:#5dcc4e;
 }
 
 .side{
-  position:relative;
-  width:92px;
-  height:92px;
-  margin-top:13px;
-  background:white;
-  border-radius:25px;
-  color:#365781;
-  font-weight:bold;
-  box-shadow:0 5px 18px #477a9925;
+    position:relative;
+    width:92px;
+    height:92px;
+    margin-top:13px;
+    background:white;
+    border-radius:25px;
+    color:#365781;
+    font-weight:bold;
+    box-shadow:0 5px 18px #477a9925;
 }
 
 .side .icon{
-  display:block;
-  font-size:34px;
-  margin-bottom:5px;
+    display:block;
+    font-size:34px;
+    margin-bottom:5px;
 }
 
 .badge{
-  position:absolute;
-  top:5px;
-  right:7px;
-  background:#ed5c76;
-  color:white;
-  border-radius:50%;
-  padding:4px 7px;
+    position:absolute;
+    top:5px;
+    right:7px;
+    background:#ed5c76;
+    color:white;
+    border-radius:50%;
+    padding:4px 7px;
 }
 
 /* MONSTER */
 
 .monsterArea{
-  position:absolute;
-  z-index:4;
-  top:185px;
-  left:50%;
-  transform:translateX(-50%);
-  width:400px;
-  text-align:center;
+    position:absolute;
+    top:185px;
+    left:50%;
+    transform:translateX(-50%);
+    width:400px;
+    text-align:center;
 }
 
 .name{
-  width:270px;
-  margin:auto;
-  padding:13px 25px;
-  text-align:left;
-  background:white;
-  border-radius:25px;
-  font-weight:bold;
-  box-shadow:0 5px 18px #477a9925;
+    width:270px;
+    margin:auto;
+    padding:13px 25px;
+    text-align:left;
+    background:white;
+    border-radius:25px;
+    font-weight:bold;
 }
 
 .healthSmall{
-  height:10px;
-  margin-left:85px;
-  margin-top:-10px;
-  background:#d6e0ed;
-  border-radius:10px;
+    height:10px;
+    margin-left:85px;
+    margin-top:-10px;
+    background:#d6e0ed;
+    border-radius:10px;
 }
 
 .healthSmall span{
-  display:block;
-  width:67%;
-  height:100%;
-  background:#5cc94f;
-  border-radius:10px;
+    display:block;
+    width:67%;
+    height:100%;
+    background:#5cc94f;
+    border-radius:10px;
 }
 
 .hp{
-  display:inline-block;
-  margin-top:4px;
-  padding:8px 25px;
-  background:white;
-  border-radius:22px;
-  font-weight:bold;
+    display:inline-block;
+    margin-top:4px;
+    padding:8px 25px;
+    background:white;
+    border-radius:22px;
+    font-weight:bold;
 }
 
 .monster{
-  margin-top:15px;
-  font-size:175px;
-  line-height:180px;
-  filter:drop-shadow(0 18px 8px #456d5438);
+    margin-top:15px;
+    font-size:175px;
+    line-height:180px;
+    filter:drop-shadow(0 18px 8px #456d5438);
 }
 
 .speech{
-  position:absolute;
-  right:0;
-  top:150px;
-  width:60px;
-  height:60px;
-  background:white;
-  border-radius:50%;
-  display:grid;
-  place-items:center;
-  font-size:32px;
+    position:absolute;
+    right:0;
+    top:150px;
+    width:60px;
+    height:60px;
+    background:white;
+    border-radius:50%;
+    display:grid;
+    place-items:center;
+    font-size:32px;
 }
 
 /* STATS */
 
 .stats{
-  position:absolute;
-  z-index:8;
-  top:220px;
-  right:3%;
-  width:265px;
-  padding:20px;
-  background:white;
-  border-radius:27px;
-  box-shadow:0 5px 20px #477a9925;
+    position:absolute;
+    top:220px;
+    right:3%;
+    width:265px;
+    padding:20px;
+    background:white;
+    border-radius:27px;
 }
 
 .stat{
-  margin-bottom:14px;
+    margin-bottom:14px;
 }
 
 .statTitle{
-  display:flex;
-  gap:7px;
-  font-weight:bold;
+    display:flex;
+    gap:7px;
+    font-weight:bold;
 }
 
 .statTitle span{
-  margin-left:auto;
-  font-size:13px;
-  color:#75839a;
+    margin-left:auto;
+    font-size:13px;
+    color:#75839a;
 }
 
 .bar{
-  height:10px;
-  margin-top:6px;
-  background:#dce5ef;
-  border-radius:10px;
-  overflow:hidden;
+    height:10px;
+    margin-top:6px;
+    background:#dce5ef;
+    border-radius:10px;
+    overflow:hidden;
 }
 
 .bar span{
-  display:block;
-  height:100%;
-  border-radius:10px;
+    display:block;
+    height:100%;
+    border-radius:10px;
 }
 
 .healthBar{
-  width:85%;
-  background:#ef5c75;
+    width:85%;
+    background:#ef5c75;
 }
 
 .hungerBar{
-  width:60%;
-  background:#f3af29;
+    width:60%;
+    background:#f3af29;
 }
 
 .energyBar{
-  width:70%;
-  background:#43ace7;
+    width:70%;
+    background:#43ace7;
 }
 
 .feed{
-  width:100%;
-  margin-top:10px;
-  padding:10px;
-  display:flex;
-  align-items:center;
-  gap:10px;
-  text-align:left;
-  background:#e4f3ff;
-  border-radius:25px;
-  color:#4775a5;
-  font-weight:bold;
-}
-
-.feedIcon{
-  font-size:35px;
+    width:100%;
+    margin-top:10px;
+    padding:10px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    text-align:left;
+    background:#e4f3ff;
+    border-radius:25px;
+    color:#4775a5;
+    font-weight:bold;
 }
 
 /* ACTIONS */
 
 .actions{
-  position:absolute;
-  z-index:9;
-  left:50%;
-  bottom:210px;
-  transform:translateX(-50%);
-  width:790px;
-  display:flex;
-  gap:16px;
+    position:absolute;
+    left:50%;
+    bottom:210px;
+    transform:translateX(-50%);
+    width:790px;
+    display:flex;
+    gap:16px;
 }
 
 .action{
-  flex:1;
-  height:78px;
-  border-radius:40px;
-  color:white;
-  font-weight:bold;
-  font-size:19px;
-  box-shadow:0 6px 15px #34556c45;
+    flex:1;
+    height:78px;
+    border-radius:40px;
+    color:white;
+    font-weight:bold;
+    font-size:19px;
 }
 
 .action small{
-  display:block;
-  margin-top:4px;
+    display:block;
+    margin-top:4px;
 }
 
 .egg{
-  background:linear-gradient(#ff7292,#f65c79);
+    background:linear-gradient(#ff7292,#f65c79);
 }
 
 .food{
-  background:linear-gradient(#4bd064,#25b75b);
+    background:linear-gradient(#4bd064,#25b75b);
 }
 
 .fight{
-  background:linear-gradient(#9e60f1,#7441dc);
+    background:linear-gradient(#9e60f1,#7441dc);
 }
 
-/* MONSTERS */
+/* COLLECTION */
 
 .collection{
-  position:absolute;
-  z-index:7;
-  left:3%;
-  bottom:78px;
-  width:94%;
-  height:165px;
-  padding:18px 22px;
-  background:white;
-  border-radius:28px;
+    position:absolute;
+    left:3%;
+    bottom:78px;
+    width:94%;
+    height:165px;
+    padding:18px 22px;
+    background:white;
+    border-radius:28px;
 }
 
 .collectionTitle{
-  font-size:20px;
-  font-weight:bold;
-  margin-bottom:13px;
+    font-size:20px;
+    font-weight:bold;
+    margin-bottom:13px;
 }
 
 .cards{
-  display:flex;
-  gap:14px;
+    display:flex;
+    gap:14px;
 }
 
 .card{
-  flex:1;
-  padding:9px;
-  display:flex;
-  align-items:center;
-  gap:10px;
-  background:#eef3f9;
-  border-radius:22px;
+    flex:1;
+    padding:9px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    background:#eef3f9;
+    border-radius:22px;
 }
 
 .cardImage{
-  width:65px;
-  height:65px;
-  border-radius:18px;
-  background:#c8efff;
-  display:grid;
-  place-items:center;
-  font-size:40px;
-}
-
-.card:nth-child(2) .cardImage{
-  background:#ebdcff;
-}
-
-.card:nth-child(3) .cardImage{
-  background:#fff0d4;
-}
-
-.card:nth-child(4) .cardImage{
-  background:#dcf3df;
-}
-
-.miniBar{
-  width:90px;
-  height:8px;
-  margin-top:7px;
-  background:#ccd7e7;
-  border-radius:8px;
-}
-
-.miniBar span{
-  display:block;
-  width:60%;
-  height:100%;
-  background:#5dcc4e;
-  border-radius:8px;
+    width:65px;
+    height:65px;
+    border-radius:18px;
+    background:#c8efff;
+    display:grid;
+    place-items:center;
+    font-size:40px;
 }
 
 /* NAV */
 
 .nav{
-  position:absolute;
-  z-index:12;
-  left:6%;
-  bottom:0;
-  width:88%;
-  height:75px;
-  display:flex;
-  align-items:center;
-  background:white;
-  border-radius:28px 28px 0 0;
+    position:absolute;
+    left:6%;
+    bottom:0;
+    width:88%;
+    height:75px;
+    display:flex;
+    align-items:center;
+    background:white;
+    border-radius:28px 28px 0 0;
 }
 
 .nav button{
-  flex:1;
-  background:none;
-  color:#7a89a5;
-  font-weight:bold;
+    flex:1;
+    background:none;
+    color:#7a89a5;
+    font-weight:bold;
 }
 
 .navIcon{
-  display:block;
-  font-size:27px;
-  margin-bottom:2px;
+    display:block;
+    font-size:27px;
+    margin-bottom:2px;
 }
 
 .nav .active{
-  color:#4c70d5;
+    color:#4c70d5;
 }
 
 .centerEgg{
-  width:70px;
-  height:70px;
-  margin:-35px auto 0;
-  border:6px solid white;
-  border-radius:50%;
-  background:linear-gradient(135deg,#ff7aad,#9957ed);
-  display:grid;
-  place-items:center;
-  font-size:36px;
-  box-shadow:0 5px 15px #4e559955;
+    width:70px;
+    height:70px;
+    margin:-35px auto 0;
+    border:6px solid white;
+    border-radius:50%;
+    background:linear-gradient(135deg,#ff7aad,#9957ed);
+    display:grid;
+    place-items:center;
+    font-size:36px;
+}
+
+/* MODAL */
+
+.modal{
+    position:fixed;
+    inset:0;
+    z-index:100;
+    background:#193c5a66;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+}
+
+.modalBox{
+    width:min(430px,94vw);
+    padding:25px;
+    background:white;
+    border-radius:28px;
+}
+
+.close{
+    float:right;
+    width:36px;
+    height:36px;
+    border-radius:50%;
+    background:#edf3f9;
+    font-size:25px;
+}
+
+.modalButtons{
+    display:flex;
+    gap:10px;
+    margin-top:18px;
+}
+
+.modalButtons button{
+    padding:11px 16px;
+    border-radius:16px;
+    background:#5b77df;
+    color:white;
+    font-weight:bold;
+}
+
+.inventoryGrid,
+.shopGrid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+}
+
+.inventoryGrid div,
+.shopGrid button{
+    padding:18px;
+    border-radius:18px;
+    background:#eef5fb;
+    text-align:center;
+    font-weight:bold;
+}
+
+.monsterRow{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:10px;
+    margin:8px 0;
+    background:#f1f5fa;
+    border-radius:17px;
+}
+
+.monsterRow button{
+    padding:8px 12px;
+    border-radius:12px;
+    background:#5b77df;
+    color:white;
+}
+
+.toast{
+    position:fixed;
+    z-index:200;
+    left:50%;
+    bottom:95px;
+    transform:translateX(-50%);
+    padding:13px 20px;
+    border-radius:20px;
+    background:#263f61;
+    color:white;
+    font-weight:bold;
 }
 
 /* MOBILE */
 
 @media(max-width:850px){
 
-  .topbar{
-    height:58px;
-  }
+    .topbar{
+        height:58px;
+    }
 
-  .logo{
-    font-size:22px;
-  }
+    .logo{
+        font-size:22px;
+    }
 
-  .resource{
-    display:none;
-  }
+    .resource{
+        display:none;
+    }
 
-  .left{
-    top:90px;
-    width:150px;
-  }
+    .left{
+        top:90px;
+        width:150px;
+    }
 
-  .player{
-    padding:8px;
-  }
+    .player{
+        padding:8px;
+    }
 
-  .petmini{
-    width:45px;
-    height:45px;
-    font-size:30px;
-  }
+    .petmini{
+        width:45px;
+        height:45px;
+        font-size:30px;
+    }
 
-  .xp{
-    width:80px;
-  }
+    .xp{
+        width:80px;
+    }
 
-  .side{
-    width:65px;
-    height:65px;
-    font-size:10px;
-  }
+    .side{
+        width:65px;
+        height:65px;
+        font-size:10px;
+    }
 
-  .side .icon{
-    font-size:25px;
-  }
+    .side .icon{
+        font-size:25px;
+    }
 
-  .stats{
-    top:145px;
-    width:190px;
-    padding:13px;
-  }
+    .stats{
+        top:145px;
+        width:190px;
+        padding:13px;
+    }
 
-  .monsterArea{
-    top:125px;
-    width:300px;
-  }
+    .monsterArea{
+        top:125px;
+        width:300px;
+    }
 
-  .monster{
-    font-size:130px;
-    line-height:145px;
-  }
+    .monster{
+        font-size:130px;
+        line-height:145px;
+    }
 
-  .actions{
-    bottom:215px;
-    width:94%;
-  }
+    .actions{
+        bottom:215px;
+        width:94%;
+    }
 
-  .action{
-    height:65px;
-    font-size:14px;
-  }
+    .action{
+        height:65px;
+        font-size:14px;
+    }
 
-  .collection{
-    bottom:70px;
-    height:125px;
-    padding:11px;
-  }
+    .collection{
+        bottom:70px;
+        height:125px;
+        padding:11px;
+    }
 
-  .collectionTitle{
-    font-size:15px;
-  }
+    .collectionTitle{
+        font-size:15px;
+    }
 
-  .card{
-    padding:6px;
-  }
+    .card{
+        padding:6px;
+    }
 
-  .cardImage{
-    width:45px;
-    height:45px;
-    font-size:28px;
-  }
+    .cardImage{
+        width:45px;
+        height:45px;
+        font-size:28px;
+    }
 
-  .card:nth-child(n+3){
-    display:none;
-  }
+    .card:nth-child(n+3){
+        display:none;
+    }
 
-  .nav{
-    height:70px;
-  }
+    .nav{
+        height:70px;
+    }
 
-  .nav button{
-    font-size:10px;
-  }
+    .nav button{
+        font-size:10px;
+    }
 }
 </style>
 </head>
@@ -610,13 +649,13 @@ button{
 <div class="resource">
 <div class="icon">🪙</div>
 <strong id="coins">1,250</strong>
-<button class="plus">+</button>
+<button class="plus" onclick="shop()">+</button>
 </div>
 
 <div class="resource">
 <div class="icon">💎</div>
 <strong id="gems">45</strong>
-<button class="plus">+</button>
+<button class="plus" onclick="shop()">+</button>
 </div>
 
 <div class="resource">
@@ -628,7 +667,7 @@ button{
 
 <div class="avatar">👤</div>
 
-<button class="settings">⚙️</button>
+<button class="settings" onclick="settings()">⚙️</button>
 
 </header>
 
@@ -646,10 +685,10 @@ button{
 <div>Lv. 5</div>
 
 <div class="xp">
-<span></span>
+<span id="xpBar"></span>
 </div>
 
-<small>120 / 300 XP</small>
+<small id="xpText">120 / 300 XP</small>
 </div>
 
 </div>
@@ -750,7 +789,7 @@ Bloo ✎
 
 <div class="statTitle">
 ⚡ Enerji
-<span id="energyText">70/100</span>
+<span id="energyText">80/100</span>
 </div>
 
 <div class="bar">
@@ -762,9 +801,7 @@ Bloo ✎
 
 <button class="feed" onclick="feed()">
 
-<div class="feedIcon">
 🥩
-</div>
 
 <div>
 Yem ver
@@ -820,7 +857,6 @@ Yem ver
 🐾 Monsterlərim
 </div>
 
-
 <div class="cards">
 
 <div class="card">
@@ -833,11 +869,6 @@ Yem ver
 <b>Bloo</b>
 <br>
 Lv. 5
-
-<div class="miniBar">
-<span></span>
-</div>
-
 </div>
 
 </div>
@@ -852,10 +883,7 @@ Lv. 5
 <div>
 <b>Zappy</b>
 <br>
-🔒 Kilitli
-
-<div class="miniBar"></div>
-
+🔒 Kilidli
 </div>
 
 </div>
@@ -870,10 +898,7 @@ Lv. 5
 <div>
 <b>Flare</b>
 <br>
-🔒 Kilitli
-
-<div class="miniBar"></div>
-
+🔒 Kilidli
 </div>
 
 </div>
@@ -888,10 +913,7 @@ Lv. 5
 <div>
 <b>Aqua</b>
 <br>
-🔒 Kilitli
-
-<div class="miniBar"></div>
-
+🔒 Kilidli
 </div>
 
 </div>
@@ -903,32 +925,26 @@ Lv. 5
 
 <nav class="nav">
 
-<button class="active">
+<button class="active" onclick="home()">
 <span class="navIcon">⌂</span>
 Ana Səhifə
 </button>
 
-
-<button>
+<button onclick="monsters()">
 <span class="navIcon">🐾</span>
 Monsterlər
 </button>
 
-
-<button>
-<div class="centerEgg">
-🥚
-</div>
+<button onclick="hatchEgg()">
+<div class="centerEgg">🥚</div>
 </button>
 
-
-<button>
+<button onclick="shop()">
 <span class="navIcon">🏪</span>
 Mağaza
 </button>
 
-
-<button>
+<button onclick="more()">
 <span class="navIcon">•••</span>
 Daha çox
 </button>
@@ -940,67 +956,176 @@ Daha çox
 
 <script>
 
-let coins = 1250;
-let gems = 45;
-let energy = 32;
-let health = 85;
-let hunger = 60;
+let coins=1250;
+let gems=45;
+let energy=32;
+let health=85;
+let hunger=60;
+let xp=120;
+let level=5;
+let food=3;
+let eggs=0;
+let battles=0;
+let wins=0;
+
+let monsterList=[
+{name:"Bloo",emoji:"🔵",level:5,unlocked:true},
+{name:"Zappy",emoji:"🟣",level:1,unlocked:false},
+{name:"Flare",emoji:"🔥",level:1,unlocked:false},
+{name:"Aqua",emoji:"🟢",level:1,unlocked:false}
+];
 
 
 function render(){
 
-document.getElementById("coins").innerText =
-coins.toLocaleString("en-US");
+coinsEl().textContent=coins.toLocaleString();
 
-document.getElementById("gems").innerText =
-gems;
+gemsEl().textContent=gems;
 
-document.getElementById("topEnergy").innerText =
-energy + "/40";
+energyEl().textContent=energy+"/40";
 
-document.getElementById("hp").innerText =
-health + "/100";
+document.getElementById("hp").textContent=
+health+"/100";
 
-document.getElementById("healthText").innerText =
-health + "/100";
+document.getElementById("healthText").textContent=
+health+"/100";
 
-document.getElementById("hungerText").innerText =
-hunger + "/100";
+document.getElementById("hungerText").textContent=
+hunger+"/100";
 
-let energyPercent =
-Math.min(100,energy * 2.5);
+document.getElementById("energyText").textContent=
+Math.round(Math.min(100,energy*2.5))+"/100";
 
-document.getElementById("energyText").innerText =
-Math.round(energyPercent) + "/100";
+document.getElementById("healthBar").style.width=
+health+"%";
 
-document.getElementById("healthBar").style.width =
-health + "%";
+document.getElementById("hungerBar").style.width=
+hunger+"%";
 
-document.getElementById("hungerBar").style.width =
-hunger + "%";
+document.getElementById("energyBar").style.width=
+Math.min(100,energy*2.5)+"%";
 
-document.getElementById("energyBar").style.width =
-energyPercent + "%";
+document.getElementById("xpBar").style.width=
+(xp/300*100)+"%";
+
+document.getElementById("xpText").textContent=
+xp+" / 300 XP";
 
 }
 
 
-function message(text){
-alert(text);
+function coinsEl(){
+return document.getElementById("coins");
+}
+
+function gemsEl(){
+return document.getElementById("gems");
+}
+
+function energyEl(){
+return document.getElementById("topEnergy");
+}
+
+
+function toast(text){
+
+let old=document.querySelector(".toast");
+
+if(old)old.remove();
+
+let t=document.createElement("div");
+
+t.className="toast";
+
+t.textContent=text;
+
+document.body.appendChild(t);
+
+setTimeout(()=>t.remove(),1800);
+
+}
+
+
+function modal(title,content){
+
+let old=document.querySelector(".modal");
+
+if(old)old.remove();
+
+let m=document.createElement("div");
+
+m.className="modal";
+
+m.innerHTML=`
+
+<div class="modalBox">
+
+<button class="close"
+onclick="this.closest('.modal').remove()">×</button>
+
+<h2>${title}</h2>
+
+<div>${content}</div>
+
+</div>
+
+`;
+
+document.body.appendChild(m);
+
 }
 
 
 function buyEgg(){
 
-if(coins >= 100){
+if(coins<100){
 
-coins -= 100;
+toast("🪙 Coin kifayət etmir.");
 
-message("🥚 Yumurta alındı!");
+return;
+
+}
+
+coins-=100;
+
+eggs++;
+
+toast("🥚 Yumurta alındı!");
+
+render();
+
+}
+
+
+function hatchEgg(){
+
+if(eggs<1){
+
+toast("🥚 Əvvəlcə yumurta al.");
+
+return;
+
+}
+
+eggs--;
+
+let locked=
+monsterList.findIndex(x=>!x.unlocked);
+
+if(locked>=0){
+
+monsterList[locked].unlocked=true;
+
+toast(
+"🎉 "+monsterList[locked].name+
+" açıldı!"
+);
 
 }else{
 
-message("Kifayət qədər Coin yoxdur.");
+gems+=10;
+
+toast("💎 +10 Gem");
 
 }
 
@@ -1011,20 +1136,19 @@ render();
 
 function buyFood(){
 
-if(coins >= 20){
+if(coins<20){
 
-coins -= 20;
+toast("🪙 Coin kifayət etmir.");
 
-hunger =
-Math.min(100,hunger + 20);
-
-message("🥩 Yem alındı!");
-
-}else{
-
-message("Kifayət qədər Coin yoxdur.");
+return;
 
 }
+
+coins-=20;
+
+food++;
+
+toast("🥩 Yem alındı!");
 
 render();
 
@@ -1033,21 +1157,21 @@ render();
 
 function feed(){
 
-if(hunger < 100){
+if(food<=0){
 
-hunger =
-Math.min(100,hunger + 20);
+toast("🥩 Yem yoxdur.");
 
-health =
-Math.min(100,health + 20);
-
-message("Bloo yeməklə bəsləndi!");
-
-}else{
-
-message("Bloo toxdur.");
+return;
 
 }
+
+food--;
+
+hunger=Math.min(100,hunger+20);
+
+health=Math.min(100,health+20);
+
+toast("❤️ Bloo yemləndi!");
 
 render();
 
@@ -1056,20 +1180,45 @@ render();
 
 function fight(){
 
-if(energy >= 5){
+if(energy<5){
 
-energy -= 5;
+toast("⚡ Enerji çatmır.");
 
-coins += 50;
+return;
 
-health =
-Math.max(0,health - 5);
+}
 
-message("⚔️ Döyüş bitdi! +50 Coin");
+energy-=5;
+
+battles++;
+
+let win=Math.random()>0.25;
+
+if(win){
+
+coins+=50;
+
+wins++;
+
+xp+=35;
+
+toast("⚔️ Qələbə! +50 Coin +35 XP");
+
+if(xp>=300){
+
+level++;
+
+xp-=300;
+
+toast("🎉 Səviyyə yüksəldi!");
+
+}
 
 }else{
 
-message("⚡ Enerji çatmır.");
+health=Math.max(0,health-15);
+
+toast("⚔️ Döyüş uduzuldu.");
 
 }
 
@@ -1080,9 +1229,11 @@ render();
 
 function dailyReward(){
 
-coins += 100;
+coins+=100;
 
-message("🎁 Daily Reward: +100 Coin");
+gems+=5;
+
+toast("🎁 +100 Coin +5 Gem");
 
 render();
 
@@ -1091,48 +1242,371 @@ render();
 
 function quest(){
 
-message(
-"📜 Quest\n\n" +
-"3 döyüş et\n" +
-"Mükafat: 150 Coin"
+modal(
+
+"📜 Quests",
+
+`
+
+<p>⚔️ 3 döyüş</p>
+
+<b>${Math.min(battles,3)}/3</b>
+
+<hr>
+
+<p>🏆 2 qələbə</p>
+
+<b>${Math.min(wins,2)}/2</b>
+
+<br><br>
+
+<button onclick="questReward()"
+style="padding:12px;border-radius:15px;background:#5b77df;color:white">
+
+Mükafatı al
+
+</button>
+
+`
+
 );
+
+}
+
+
+function questReward(){
+
+coins+=150;
+
+gems+=10;
+
+document.querySelector(".modal").remove();
+
+toast("🎁 +150 Coin +10 Gem");
+
+render();
 
 }
 
 
 function inventory(){
 
-message("🎒 Inventory açıldı");
+modal(
+
+"🎒 Inventory",
+
+`
+
+<div class="inventoryGrid">
+
+<div>🥩 Yem<br><b>${food}</b></div>
+
+<div>🥚 Yumurta<br><b>${eggs}</b></div>
+
+<div>🪙 Coin<br><b>${coins}</b></div>
+
+<div>💎 Gem<br><b>${gems}</b></div>
+
+</div>
+
+`
+
+);
 
 }
 
 
 function ranking(){
 
-message(
-"🏆 Ranking\n\n" +
-"1. Player123\n" +
-"2. MonsterKing\n" +
-"3. BlooMaster"
+modal(
+
+"🏆 Ranking",
+
+`
+
+<p>🥇 Player123 — ${wins*100+coins}</p>
+
+<p>🥈 MonsterKing — 1180</p>
+
+<p>🥉 BlooMaster — 990</p>
+
+`
+
 );
 
 }
 
 
-render();
+function monsters(){
 
+modal(
 
-// Telegram Mini App
+"🐾 Monsterlər",
 
-if(window.Telegram){
+monsterList.map((m,i)=>`
 
-Telegram.WebApp.ready();
+<div style="
+padding:12px;
+margin:8px 0;
+background:#eef4fa;
+border-radius:15px">
 
-Telegram.WebApp.expand();
+${m.emoji} <b>${m.name}</b>
+— Lv.${m.level}
+
+<br>
+
+${m.unlocked
+?"✅ Açıq"
+:"🔒 Kilidli"}
+
+</div>
+
+`).join("")
+
+);
 
 }
+
+
+function shop(){
+
+modal(
+
+"🏪 Mağaza",
+
+`
+
+<div class="shopGrid">
+
+<button onclick="
+document.querySelector('.modal').remove();
+buyFood()
+">
+
+🥩 Yem<br>
+🪙 20
+
+</button>
+
+<button onclick="
+document.querySelector('.modal').remove();
+buyEgg()
+">
+
+🥚 Yumurta<br>
+🪙 100
+
+</button>
+
+<button onclick="
+buyEnergy()
+">
+
+⚡ Enerji<br>
+💎 5
+
+</button>
+
+<button onclick="
+buyHealth()
+">
+
+❤️ Sağlamlıq<br>
+💎 5
+
+</button>
+
+</div>
+
+`
+
+);
+
+}
+
+
+function buyEnergy(){
+
+if(gems<5){
+
+toast("💎 Gem kifayət etmir.");
+
+return;
+
+}
+
+gems-=5;
+
+energy=Math.min(40,energy+10);
+
+toast("⚡ +10 Enerji");
+
+document.querySelector(".modal")?.remove();
+
+render();
+
+}
+
+
+function buyHealth(){
+
+if(gems<5){
+
+toast("💎 Gem kifayət etmir.");
+
+return;
+
+}
+
+gems-=5;
+
+health=Math.min(100,health+20);
+
+toast("❤️ +20 Sağlamlıq");
+
+document.querySelector(".modal")?.remove();
+
+render();
+
+}
+
+
+function more(){
+
+modal(
+
+"••• Daha çox",
+
+`
+
+<button class="wide"
+onclick="profile()">
+👤 Profil
+</button>
+
+<button class="wide"
+onclick="settings()">
+⚙️ Ayarlar
+</button>
+
+<button class="wide"
+onclick="help()">
+❓ Kömək
+</button>
+
+`
+
+);
+
+}
+
+
+function profile(){
+
+document.querySelector(".modal")?.remove();
+
+modal(
+
+"👤 Profil",
+
+`
+
+<p>Player123</p>
+
+<p>Lv. ${level}</p>
+
+<p>XP: ${xp}/300</p>
+
+<p>⚔️ Döyüş: ${battles}</p>
+
+<p>🏆 Qələbə: ${wins}</p>
+
+`
+
+);
+
+}
+
+
+function settings(){
+
+document.querySelector(".modal")?.remove();
+
+modal(
+
+"⚙️ Ayarlar",
+
+`
+
+<label>
+
+🔊 Səs
+
+<input type="checkbox" checked>
+
+</label>
+
+<br><br>
+
+<label>
+
+🔔 Bildirişlər
+
+<input type="checkbox" checked>
+
+</label>
+
+`
+
+);
+
+}
+
+
+function help(){
+
+document.querySelector(".modal")?.remove();
+
+modal(
+
+"❓ Kömək",
+
+`
+
+<p>🥩 Yem al — Coin ilə yem al.</p>
+
+<p>🍖 Yem ver — Monsterin göstəricilərini artır.</p>
+
+<p>⚔️ Döyüş — Coin və XP qazan.</p>
+
+<p>🥚 Yumurta — yeni Monster aç.</p>
+
+<p>🏪 Mağaza — əlavə əşyalar al.</p>
+
+`
+
+);
+
+}
+
+
+function home(){
+
+document.querySelector(".modal")?.remove();
+
+toast("🏠 Ana səhifə");
+
+}
+
+
+document.querySelector(".settings")
+.onclick=settings;
+
+
+render();
 
 </script>
 
 </body>
-                         </html>
+</html>
