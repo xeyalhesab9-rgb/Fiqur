@@ -1,290 +1,1138 @@
 <!DOCTYPE html>
 <html lang="az">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Warzone 3D Command</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Roboto, sans-serif; }
-        body {
-            background: #0b1120;
-            color: #ffffff;
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-            overflow: hidden;
-            user-select: none;
-        }
-        
-        /* Top Navigation / Stats */
-        .header-panel {
-            background: linear-gradient(180deg, #1e293b, #0f172a);
-            padding: 12px 16px;
-            border-bottom: 2px solid #334155;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-            z-index: 10;
-        }
-        .stat-card {
-            background: #1e293b;
-            padding: 6px 12px;
-            border-radius: 10px;
-            border: 1px solid #334155;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .stat-val { font-size: 16px; font-weight: bold; color: #f59e0b; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>MonsterLand</title>
 
-        /* Canvas Area */
-        #gameCanvas {
-            flex: 1;
-            width: 100%;
-            touch-action: none;
-            background: radial-gradient(circle at center, #1e293b 0%, #0b1120 100%);
-        }
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
 
-        /* Controls Panel */
-        .controls-panel {
-            background: #0f172a;
-            padding: 15px;
-            border-top: 2px solid #1e293b;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            z-index: 10;
-        }
-        .btn {
-            background: linear-gradient(135deg, #16a34a, #15803d);
-            color: #fff;
-            border: none;
-            padding: 14px;
-            font-size: 16px;
-            font-weight: bold;
-            border-radius: 12px;
-            cursor: pointer;
-            box-shadow: 0 4px 12px rgba(22, 163, 74, 0.4);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 8px;
-        }
-        .btn:active { transform: scale(0.97); }
-        .btn-attack { background: linear-gradient(135deg, #dc2626, #991b1b); box-shadow: 0 4px 12px rgba(220, 38, 38, 0.4); }
-    </style>
+<style>
+*{
+  box-sizing:border-box;
+}
+
+body{
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:#8bdcff;
+  color:#294d80;
+  overflow-x:hidden;
+}
+
+button{
+  border:0;
+  cursor:pointer;
+  font:inherit;
+}
+
+.app{
+  min-height:100vh;
+  position:relative;
+  overflow:hidden;
+  background:
+    linear-gradient(
+      #8bdcff 0%,
+      #c9f0ff 43%,
+      #79c969 44%,
+      #91d875 100%
+    );
+}
+
+/* TOP */
+
+.topbar{
+  position:relative;
+  z-index:10;
+  width:94%;
+  height:70px;
+  margin:12px auto;
+  padding:8px 18px;
+  display:flex;
+  align-items:center;
+  gap:14px;
+  background:white;
+  border-radius:36px;
+  box-shadow:0 5px 20px #477a9925;
+}
+
+.logo{
+  font-size:30px;
+  font-weight:900;
+  color:#168bd5;
+  text-shadow:2px 3px white,3px 4px #274477;
+}
+
+.logo span{
+  color:#ffc928;
+}
+
+.resource{
+  height:48px;
+  padding:5px 10px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  background:white;
+  border-radius:26px;
+  box-shadow:inset 0 0 0 1px #e4edf6;
+}
+
+.resource .icon{
+  font-size:27px;
+}
+
+.resource strong{
+  font-size:17px;
+}
+
+.plus{
+  width:30px;
+  height:30px;
+  border-radius:50%;
+  background:#54ca6d;
+  color:white;
+  font-size:23px;
+}
+
+.space{
+  flex:1;
+}
+
+.avatar{
+  width:43px;
+  height:43px;
+  border-radius:50%;
+  background:#dce6f1;
+  display:grid;
+  place-items:center;
+  font-size:23px;
+}
+
+.settings{
+  background:none;
+  font-size:27px;
+}
+
+/* LEFT */
+
+.left{
+  position:absolute;
+  z-index:8;
+  top:105px;
+  left:3%;
+  width:230px;
+}
+
+.player{
+  padding:15px;
+  display:flex;
+  gap:12px;
+  align-items:center;
+  background:white;
+  border-radius:25px;
+  box-shadow:0 5px 18px #477a9925;
+}
+
+.petmini{
+  width:65px;
+  height:65px;
+  border-radius:50%;
+  background:#b8efff;
+  display:grid;
+  place-items:center;
+  font-size:43px;
+}
+
+.xp{
+  width:130px;
+  height:9px;
+  margin-top:7px;
+  background:#d8e1ee;
+  border-radius:10px;
+  overflow:hidden;
+}
+
+.xp span{
+  display:block;
+  width:40%;
+  height:100%;
+  background:#5dcc4e;
+}
+
+.side{
+  position:relative;
+  width:92px;
+  height:92px;
+  margin-top:13px;
+  background:white;
+  border-radius:25px;
+  color:#365781;
+  font-weight:bold;
+  box-shadow:0 5px 18px #477a9925;
+}
+
+.side .icon{
+  display:block;
+  font-size:34px;
+  margin-bottom:5px;
+}
+
+.badge{
+  position:absolute;
+  top:5px;
+  right:7px;
+  background:#ed5c76;
+  color:white;
+  border-radius:50%;
+  padding:4px 7px;
+}
+
+/* MONSTER */
+
+.monsterArea{
+  position:absolute;
+  z-index:4;
+  top:185px;
+  left:50%;
+  transform:translateX(-50%);
+  width:400px;
+  text-align:center;
+}
+
+.name{
+  width:270px;
+  margin:auto;
+  padding:13px 25px;
+  text-align:left;
+  background:white;
+  border-radius:25px;
+  font-weight:bold;
+  box-shadow:0 5px 18px #477a9925;
+}
+
+.healthSmall{
+  height:10px;
+  margin-left:85px;
+  margin-top:-10px;
+  background:#d6e0ed;
+  border-radius:10px;
+}
+
+.healthSmall span{
+  display:block;
+  width:67%;
+  height:100%;
+  background:#5cc94f;
+  border-radius:10px;
+}
+
+.hp{
+  display:inline-block;
+  margin-top:4px;
+  padding:8px 25px;
+  background:white;
+  border-radius:22px;
+  font-weight:bold;
+}
+
+.monster{
+  margin-top:15px;
+  font-size:175px;
+  line-height:180px;
+  filter:drop-shadow(0 18px 8px #456d5438);
+}
+
+.speech{
+  position:absolute;
+  right:0;
+  top:150px;
+  width:60px;
+  height:60px;
+  background:white;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  font-size:32px;
+}
+
+/* STATS */
+
+.stats{
+  position:absolute;
+  z-index:8;
+  top:220px;
+  right:3%;
+  width:265px;
+  padding:20px;
+  background:white;
+  border-radius:27px;
+  box-shadow:0 5px 20px #477a9925;
+}
+
+.stat{
+  margin-bottom:14px;
+}
+
+.statTitle{
+  display:flex;
+  gap:7px;
+  font-weight:bold;
+}
+
+.statTitle span{
+  margin-left:auto;
+  font-size:13px;
+  color:#75839a;
+}
+
+.bar{
+  height:10px;
+  margin-top:6px;
+  background:#dce5ef;
+  border-radius:10px;
+  overflow:hidden;
+}
+
+.bar span{
+  display:block;
+  height:100%;
+  border-radius:10px;
+}
+
+.healthBar{
+  width:85%;
+  background:#ef5c75;
+}
+
+.hungerBar{
+  width:60%;
+  background:#f3af29;
+}
+
+.energyBar{
+  width:70%;
+  background:#43ace7;
+}
+
+.feed{
+  width:100%;
+  margin-top:10px;
+  padding:10px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  text-align:left;
+  background:#e4f3ff;
+  border-radius:25px;
+  color:#4775a5;
+  font-weight:bold;
+}
+
+.feedIcon{
+  font-size:35px;
+}
+
+/* ACTIONS */
+
+.actions{
+  position:absolute;
+  z-index:9;
+  left:50%;
+  bottom:210px;
+  transform:translateX(-50%);
+  width:790px;
+  display:flex;
+  gap:16px;
+}
+
+.action{
+  flex:1;
+  height:78px;
+  border-radius:40px;
+  color:white;
+  font-weight:bold;
+  font-size:19px;
+  box-shadow:0 6px 15px #34556c45;
+}
+
+.action small{
+  display:block;
+  margin-top:4px;
+}
+
+.egg{
+  background:linear-gradient(#ff7292,#f65c79);
+}
+
+.food{
+  background:linear-gradient(#4bd064,#25b75b);
+}
+
+.fight{
+  background:linear-gradient(#9e60f1,#7441dc);
+}
+
+/* MONSTERS */
+
+.collection{
+  position:absolute;
+  z-index:7;
+  left:3%;
+  bottom:78px;
+  width:94%;
+  height:165px;
+  padding:18px 22px;
+  background:white;
+  border-radius:28px;
+}
+
+.collectionTitle{
+  font-size:20px;
+  font-weight:bold;
+  margin-bottom:13px;
+}
+
+.cards{
+  display:flex;
+  gap:14px;
+}
+
+.card{
+  flex:1;
+  padding:9px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  background:#eef3f9;
+  border-radius:22px;
+}
+
+.cardImage{
+  width:65px;
+  height:65px;
+  border-radius:18px;
+  background:#c8efff;
+  display:grid;
+  place-items:center;
+  font-size:40px;
+}
+
+.card:nth-child(2) .cardImage{
+  background:#ebdcff;
+}
+
+.card:nth-child(3) .cardImage{
+  background:#fff0d4;
+}
+
+.card:nth-child(4) .cardImage{
+  background:#dcf3df;
+}
+
+.miniBar{
+  width:90px;
+  height:8px;
+  margin-top:7px;
+  background:#ccd7e7;
+  border-radius:8px;
+}
+
+.miniBar span{
+  display:block;
+  width:60%;
+  height:100%;
+  background:#5dcc4e;
+  border-radius:8px;
+}
+
+/* NAV */
+
+.nav{
+  position:absolute;
+  z-index:12;
+  left:6%;
+  bottom:0;
+  width:88%;
+  height:75px;
+  display:flex;
+  align-items:center;
+  background:white;
+  border-radius:28px 28px 0 0;
+}
+
+.nav button{
+  flex:1;
+  background:none;
+  color:#7a89a5;
+  font-weight:bold;
+}
+
+.navIcon{
+  display:block;
+  font-size:27px;
+  margin-bottom:2px;
+}
+
+.nav .active{
+  color:#4c70d5;
+}
+
+.centerEgg{
+  width:70px;
+  height:70px;
+  margin:-35px auto 0;
+  border:6px solid white;
+  border-radius:50%;
+  background:linear-gradient(135deg,#ff7aad,#9957ed);
+  display:grid;
+  place-items:center;
+  font-size:36px;
+  box-shadow:0 5px 15px #4e559955;
+}
+
+/* MOBILE */
+
+@media(max-width:850px){
+
+  .topbar{
+    height:58px;
+  }
+
+  .logo{
+    font-size:22px;
+  }
+
+  .resource{
+    display:none;
+  }
+
+  .left{
+    top:90px;
+    width:150px;
+  }
+
+  .player{
+    padding:8px;
+  }
+
+  .petmini{
+    width:45px;
+    height:45px;
+    font-size:30px;
+  }
+
+  .xp{
+    width:80px;
+  }
+
+  .side{
+    width:65px;
+    height:65px;
+    font-size:10px;
+  }
+
+  .side .icon{
+    font-size:25px;
+  }
+
+  .stats{
+    top:145px;
+    width:190px;
+    padding:13px;
+  }
+
+  .monsterArea{
+    top:125px;
+    width:300px;
+  }
+
+  .monster{
+    font-size:130px;
+    line-height:145px;
+  }
+
+  .actions{
+    bottom:215px;
+    width:94%;
+  }
+
+  .action{
+    height:65px;
+    font-size:14px;
+  }
+
+  .collection{
+    bottom:70px;
+    height:125px;
+    padding:11px;
+  }
+
+  .collectionTitle{
+    font-size:15px;
+  }
+
+  .card{
+    padding:6px;
+  }
+
+  .cardImage{
+    width:45px;
+    height:45px;
+    font-size:28px;
+  }
+
+  .card:nth-child(n+3){
+    display:none;
+  }
+
+  .nav{
+    height:70px;
+  }
+
+  .nav button{
+    font-size:10px;
+  }
+}
+</style>
 </head>
+
 <body>
 
-    <div class="header-panel">
-        <div class="stat-card">
-            <span>🪙 Balans:</span>
-            <span class="stat-val" id="gold">100</span>
-        </div>
-        <div class="stat-card">
-            <span>⚡ Qazanc:</span>
-            <span class="stat-val" style="color: #38bdf8;" id="income">0/s</span>
-        </div>
-    </div>
+<div class="app">
 
-    <canvas id="gameCanvas"></canvas>
+<header class="topbar">
 
-    <div class="controls-panel">
-        <button class="btn" onclick="spawnUnit()">🪖 Birlik Çağır (<span id="cost">50</span> Gold)</button>
-        <button class="btn btn-attack" onclick="attackBase()">⚔️ Düşmən Üssünə Hücum Et (+200 Gold)</button>
-    </div>
+<div class="logo">
+<span>Monster</span>Land
+</div>
 
-    <script>
-        const tg = window.Telegram.WebApp;
-        tg.expand();
+<div class="resource">
+<div class="icon">🪙</div>
+<strong id="coins">1,250</strong>
+<button class="plus">+</button>
+</div>
 
-        let gold = 100;
-        let cost = 50;
-        let selectedIndex = null;
-        let grid = [1, 0, 0, 0, 0, 0, 0, 0, 0];
+<div class="resource">
+<div class="icon">💎</div>
+<strong id="gems">45</strong>
+<button class="plus">+</button>
+</div>
 
-        const canvas = document.getElementById("gameCanvas");
-        const ctx = canvas.getContext("2d");
+<div class="resource">
+<div class="icon">⚡</div>
+<strong id="topEnergy">32/40</strong>
+</div>
 
-        function resizeCanvas() {
-            canvas.width = canvas.clientWidth;
-            canvas.height = canvas.clientHeight;
-            render();
-        }
-        window.addEventListener('resize', resizeCanvas);
+<div class="space"></div>
 
-        // Birlik Türleri ve Detayları
-        const unitTypes = {
-            1: { color: "#22c55e", darkColor: "#15803d", topColor: "#4ade80", label: "🪖 Piyada", inc: 3 },
-            2: { color: "#3b82f6", darkColor: "#1d4ed8", topColor: "#60a5fa", label: "🥷 Snayper", inc: 8 },
-            3: { color: "#a855f7", darkColor: "#7e22ce", topColor: "#c084fc", label: "💥 Ağır Birlik", inc: 20 },
-            4: { color: "#f59e0b", darkColor: "#b45309", topColor: "#fbbf24", label: "🏎️ Zirehli", inc: 50 },
-            5: { color: "#ef4444", darkColor: "#b91c1c", topColor: "#f87171", label: "🚁 Helikopter", inc: 120 }
-        };
+<div class="avatar">👤</div>
 
-        function drawIsoTile(col, row, isSelected, level) {
-            // Büyük ve Ortalanmış İzometrik Koordinatlar
-            const tileSize = Math.min(canvas.width / 4.5, 80);
-            const startX = canvas.width / 2;
-            const startY = canvas.height / 2.8;
+<button class="settings">⚙️</button>
 
-            const isoX = startX + (col - row) * (tileSize * 0.9);
-            const isoY = startY + (col + row) * (tileSize * 0.45);
+</header>
 
-            // Zemin Zirvesi / Platform
-            ctx.beginPath();
-            ctx.moveTo(isoX, isoY);
-            ctx.lineTo(isoX + tileSize * 0.9, isoY + tileSize * 0.45);
-            ctx.lineTo(isoX, isoY + tileSize * 0.9);
-            ctx.lineTo(isoX - tileSize * 0.9, isoY + tileSize * 0.45);
-            ctx.closePath();
 
-            ctx.fillStyle = isSelected ? "#0284c7" : "#1e293b";
-            ctx.fill();
-            ctx.strokeStyle = isSelected ? "#38bdf8" : "#475569";
-            ctx.lineWidth = isSelected ? 3 : 1.5;
-            ctx.stroke();
+<aside class="left">
 
-            // 3D Birlik Binası / Asker
-            if (level > 0) {
-                const conf = unitTypes[level] || unitTypes[1];
-                const h = 45 + level * 8;
-                const py = isoY - (isSelected ? 12 : 0);
+<div class="player">
 
-                // Sol Yan Yüz
-                ctx.beginPath();
-                ctx.moveTo(isoX - tileSize * 0.55, py + tileSize * 0.35);
-                ctx.lineTo(isoX, py + tileSize * 0.6);
-                ctx.lineTo(isoX, py + tileSize * 0.6 - h);
-                ctx.lineTo(isoX - tileSize * 0.55, py + tileSize * 0.35 - h);
-                ctx.closePath();
-                ctx.fillStyle = conf.darkColor;
-                ctx.fill();
+<div class="petmini">
+🔵
+</div>
 
-                // Sağ Yan Yüz
-                ctx.beginPath();
-                ctx.moveTo(isoX, py + tileSize * 0.6);
-                ctx.lineTo(isoX + tileSize * 0.55, py + tileSize * 0.35);
-                ctx.lineTo(isoX + tileSize * 0.55, py + tileSize * 0.35 - h);
-                ctx.lineTo(isoX, py + tileSize * 0.6 - h);
-                ctx.closePath();
-                ctx.fillStyle = conf.color;
-                ctx.fill();
+<div>
+<b>Player123</b>
+<div>Lv. 5</div>
 
-                // Üst Tavan Yüzeyi
-                ctx.beginPath();
-                ctx.moveTo(isoX, py + tileSize * 0.1 - h);
-                ctx.lineTo(isoX + tileSize * 0.55, py + tileSize * 0.35 - h);
-                ctx.lineTo(isoX, py + tileSize * 0.6 - h);
-                ctx.lineTo(isoX - tileSize * 0.55, py + tileSize * 0.35 - h);
-                ctx.closePath();
-                ctx.fillStyle = conf.topColor;
-                ctx.fill();
+<div class="xp">
+<span></span>
+</div>
 
-                // Etiket & İkon
-                ctx.font = "bold 22px Arial";
-                ctx.textAlign = "center";
-                ctx.fillText(conf.label.split(' ')[0], isoX, py + tileSize * 0.4 - h);
+<small>120 / 300 XP</small>
+</div>
 
-                ctx.font = "bold 11px Arial";
-                ctx.fillStyle = "#ffffff";
-                ctx.fillText("Lv." + level, isoX, py + tileSize * 0.62 - h);
-            }
-        }
+</div>
 
-        function render() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            let totalInc = 0;
 
-            for (let row = 0; row < 3; row++) {
-                for (let col = 0; col < 3; col++) {
-                    const idx = row * 3 + col;
-                    const level = grid[idx];
-                    drawIsoTile(col, row, selectedIndex === idx, level);
-                    if (level > 0) totalInc += (unitTypes[level] ? unitTypes[level].inc : 3);
-                }
-            }
+<button class="side" onclick="dailyReward()">
+<span class="icon">🎁</span>
+Daily Reward
+<span class="badge">1</span>
+</button>
 
-            document.getElementById("gold").innerText = Math.floor(gold);
-            document.getElementById("income").innerText = totalInc + "/s";
-            document.getElementById("cost").innerText = cost;
-            return totalInc;
-        }
 
-        canvas.addEventListener("pointerdown", (e) => {
-            const rect = canvas.getBoundingClientRect();
-            const clickX = e.clientX - rect.left;
-            const clickY = e.clientY - rect.top;
+<button class="side" onclick="quest()">
+<span class="icon">📜</span>
+Quests
+</button>
 
-            const tileSize = Math.min(canvas.width / 4.5, 80);
-            const startX = canvas.width / 2;
-            const startY = canvas.height / 2.8;
 
-            let clickedIdx = -1;
-            let minDist = tileSize * 0.8;
+<button class="side" onclick="inventory()">
+<span class="icon">🎒</span>
+Inventory
+</button>
 
-            for (let row = 0; row < 3; row++) {
-                for (let col = 0; col < 3; col++) {
-                    const isoX = startX + (col - row) * (tileSize * 0.9);
-                    const isoY = startY + (col + row) * (tileSize * 0.45);
-                    const dist = Math.hypot(clickX - isoX, clickY - (isoY + tileSize * 0.4));
 
-                    if (dist < minDist) {
-                        minDist = dist;
-                        clickedIdx = row * 3 + col;
-                    }
-                }
-            }
+<button class="side" onclick="ranking()">
+<span class="icon">🏆</span>
+Ranking
+</button>
 
-            if (clickedIdx !== -1) {
-                if (selectedIndex === null) {
-                    if (grid[clickedIdx] > 0) selectedIndex = clickedIdx;
-                } else {
-                    if (selectedIndex === clickedIdx) {
-                        selectedIndex = null;
-                    } else if (grid[selectedIndex] === grid[clickedIdx] && grid[clickedIdx] > 0) {
-                        if (grid[clickedIdx] < 5) {
-                            grid[clickedIdx] += 1;
-                            grid[selectedIndex] = 0;
-                        }
-                        selectedIndex = null;
-                    } else {
-                        selectedIndex = grid[clickedIdx] > 0 ? clickedIdx : null;
-                    }
-                }
-                render();
-            }
-        });
+</aside>
 
-        function spawnUnit() {
-            const emptyIdx = grid.indexOf(0);
-            if (emptyIdx === -1) {
-                alert("Üstə boş yer yoxdur!");
-                return;
-            }
-            if (gold >= cost) {
-                gold -= cost;
-                grid[emptyIdx] = 1;
-                cost = Math.floor(cost * 1.35);
-                render();
-            } else {
-                alert("Kifayət qədər qızılınız yoxdur!");
-            }
-        }
 
-        function attackBase() {
-            gold += 200;
-            alert("⚔️ Düşmən üssü yağmalandı! +200 Qızıl qazandınız.");
-            render();
-        }
+<main class="monsterArea">
 
-        setInterval(() => {
-            gold += render();
-        }, 1000);
+<div class="name">
 
-        setTimeout(resizeCanvas, 100);
-    </script>
+Bloo ✎
+
+<br>
+
+<small>Lv. 5</small>
+
+<div class="healthSmall">
+<span></span>
+</div>
+
+</div>
+
+
+<div class="hp">
+❤️ <span id="hp">85/100</span>
+</div>
+
+
+<div class="monster">
+🔵
+</div>
+
+
+<div class="speech">
+😃
+</div>
+
+</main>
+
+
+<section class="stats">
+
+<div class="stat">
+
+<div class="statTitle">
+❤️ Sağlamlıq
+<span id="healthText">85/100</span>
+</div>
+
+<div class="bar">
+<span id="healthBar" class="healthBar"></span>
+</div>
+
+</div>
+
+
+<div class="stat">
+
+<div class="statTitle">
+🍖 Aclıq
+<span id="hungerText">60/100</span>
+</div>
+
+<div class="bar">
+<span id="hungerBar" class="hungerBar"></span>
+</div>
+
+</div>
+
+
+<div class="stat">
+
+<div class="statTitle">
+⚡ Enerji
+<span id="energyText">70/100</span>
+</div>
+
+<div class="bar">
+<span id="energyBar" class="energyBar"></span>
+</div>
+
+</div>
+
+
+<button class="feed" onclick="feed()">
+
+<div class="feedIcon">
+🥩
+</div>
+
+<div>
+Yem ver
+<br>
+<small>+20 Sağlamlıq</small>
+</div>
+
+</button>
+
+</section>
+
+
+<section class="actions">
+
+<button class="action egg" onclick="buyEgg()">
+
+🥚 Yumurta al
+
+<small>
+🪙 100
+</small>
+
+</button>
+
+
+<button class="action food" onclick="buyFood()">
+
+🥩 Yem al
+
+<small>
+🪙 20
+</small>
+
+</button>
+
+
+<button class="action fight" onclick="fight()">
+
+⚔️ Döyüş
+
+<small>
++50 Coin
+</small>
+
+</button>
+
+</section>
+
+
+<section class="collection">
+
+<div class="collectionTitle">
+🐾 Monsterlərim
+</div>
+
+
+<div class="cards">
+
+<div class="card">
+
+<div class="cardImage">
+🔵
+</div>
+
+<div>
+<b>Bloo</b>
+<br>
+Lv. 5
+
+<div class="miniBar">
+<span></span>
+</div>
+
+</div>
+
+</div>
+
+
+<div class="card">
+
+<div class="cardImage">
+🟣
+</div>
+
+<div>
+<b>Zappy</b>
+<br>
+🔒 Kilitli
+
+<div class="miniBar"></div>
+
+</div>
+
+</div>
+
+
+<div class="card">
+
+<div class="cardImage">
+🔥
+</div>
+
+<div>
+<b>Flare</b>
+<br>
+🔒 Kilitli
+
+<div class="miniBar"></div>
+
+</div>
+
+</div>
+
+
+<div class="card">
+
+<div class="cardImage">
+🟢
+</div>
+
+<div>
+<b>Aqua</b>
+<br>
+🔒 Kilitli
+
+<div class="miniBar"></div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+
+<nav class="nav">
+
+<button class="active">
+<span class="navIcon">⌂</span>
+Ana Səhifə
+</button>
+
+
+<button>
+<span class="navIcon">🐾</span>
+Monsterlər
+</button>
+
+
+<button>
+<div class="centerEgg">
+🥚
+</div>
+</button>
+
+
+<button>
+<span class="navIcon">🏪</span>
+Mağaza
+</button>
+
+
+<button>
+<span class="navIcon">•••</span>
+Daha çox
+</button>
+
+</nav>
+
+</div>
+
+
+<script>
+
+let coins = 1250;
+let gems = 45;
+let energy = 32;
+let health = 85;
+let hunger = 60;
+
+
+function render(){
+
+document.getElementById("coins").innerText =
+coins.toLocaleString("en-US");
+
+document.getElementById("gems").innerText =
+gems;
+
+document.getElementById("topEnergy").innerText =
+energy + "/40";
+
+document.getElementById("hp").innerText =
+health + "/100";
+
+document.getElementById("healthText").innerText =
+health + "/100";
+
+document.getElementById("hungerText").innerText =
+hunger + "/100";
+
+let energyPercent =
+Math.min(100,energy * 2.5);
+
+document.getElementById("energyText").innerText =
+Math.round(energyPercent) + "/100";
+
+document.getElementById("healthBar").style.width =
+health + "%";
+
+document.getElementById("hungerBar").style.width =
+hunger + "%";
+
+document.getElementById("energyBar").style.width =
+energyPercent + "%";
+
+}
+
+
+function message(text){
+alert(text);
+}
+
+
+function buyEgg(){
+
+if(coins >= 100){
+
+coins -= 100;
+
+message("🥚 Yumurta alındı!");
+
+}else{
+
+message("Kifayət qədər Coin yoxdur.");
+
+}
+
+render();
+
+}
+
+
+function buyFood(){
+
+if(coins >= 20){
+
+coins -= 20;
+
+hunger =
+Math.min(100,hunger + 20);
+
+message("🥩 Yem alındı!");
+
+}else{
+
+message("Kifayət qədər Coin yoxdur.");
+
+}
+
+render();
+
+}
+
+
+function feed(){
+
+if(hunger < 100){
+
+hunger =
+Math.min(100,hunger + 20);
+
+health =
+Math.min(100,health + 20);
+
+message("Bloo yeməklə bəsləndi!");
+
+}else{
+
+message("Bloo toxdur.");
+
+}
+
+render();
+
+}
+
+
+function fight(){
+
+if(energy >= 5){
+
+energy -= 5;
+
+coins += 50;
+
+health =
+Math.max(0,health - 5);
+
+message("⚔️ Döyüş bitdi! +50 Coin");
+
+}else{
+
+message("⚡ Enerji çatmır.");
+
+}
+
+render();
+
+}
+
+
+function dailyReward(){
+
+coins += 100;
+
+message("🎁 Daily Reward: +100 Coin");
+
+render();
+
+}
+
+
+function quest(){
+
+message(
+"📜 Quest\n\n" +
+"3 döyüş et\n" +
+"Mükafat: 150 Coin"
+);
+
+}
+
+
+function inventory(){
+
+message("🎒 Inventory açıldı");
+
+}
+
+
+function ranking(){
+
+message(
+"🏆 Ranking\n\n" +
+"1. Player123\n" +
+"2. MonsterKing\n" +
+"3. BlooMaster"
+);
+
+}
+
+
+render();
+
+
+// Telegram Mini App
+
+if(window.Telegram){
+
+Telegram.WebApp.ready();
+
+Telegram.WebApp.expand();
+
+}
+
+</script>
+
 </body>
-</html>
+                         </html>
