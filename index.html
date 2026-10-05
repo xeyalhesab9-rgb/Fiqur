@@ -1,277 +1,530 @@
 <!DOCTYPE html>
-<html lang="az">
+<html lang="en">
 <head>
-    <meta charset="utf-8">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="theme-color" content="#f39c12">
-    <title>Bee Farm — Arıçılıq Oyunu & Kripto Panel</title>
+    <title>Bee Farm UI Game</title>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { background: #121212; color: #fff; padding: 15px; display: flex; justify-content: center; }
-        .container { width: 100%; max-width: 500px; background: #1e1e1e; padding: 20px; border-radius: 16px; box-shadow: 0 8px 24px rgba(0,0,0,0.6); }
-        
-        h1 { text-align: center; color: #f1c40f; font-size: 24px; margin-bottom: 5px; }
-        .subtitle { text-align: center; color: #888; font-size: 12px; margin-bottom: 20px; }
+        :root {
+            --wood-dark: #4a2a18;
+            --wood-medium: #8b5a2b;
+            --wood-light: #c68a4c;
+            --green-btn: #4caf50;
+            --blue-btn: #2196f3;
+            --yellow-accent: #ffc107;
+        }
 
-        /* Stat Kartları */
-        .grid-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
-        .stat-card { background: #292929; padding: 12px; border-radius: 10px; text-align: center; border: 1px solid #333; }
-        .stat-card h3 { color: #aaa; font-size: 11px; text-transform: uppercase; margin-bottom: 5px; }
-        .stat-card p { font-size: 18px; font-weight: bold; color: #f39c12; }
-        .stat-card span { font-size: 12px; color: #2ecc71; }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            font-family: 'Arial Rounded MT Bold', 'Segoe UI', sans-serif;
+        }
 
-        /* Oyun Sahəsi (Pətək & Bal Toplama) */
-        .game-area { background: #252525; padding: 20px; border-radius: 12px; text-align: center; margin-bottom: 15px; border: 2px solid #f39c12; }
-        .hive-icon { font-size: 60px; margin-bottom: 10px; cursor: pointer; user-select: none; transition: transform 0.1s; }
-        .hive-icon:active { transform: scale(0.9); }
-        .progress-bar-container { background: #444; height: 12px; border-radius: 6px; overflow: hidden; margin: 10px 0; }
-        .progress-bar { background: #f39c12; height: 100%; width: 0%; transition: width 0.3s; }
+        body {
+            background-color: #7cb342;
+            background-image: radial-gradient(#8bc34a 20%, transparent 20%);
+            background-size: 16px 16px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+        }
 
-        /* Bölmələr */
-        .section { background: #252525; padding: 15px; border-radius: 10px; margin-bottom: 15px; border: 1px solid #333; }
-        .section h3 { font-size: 14px; margin-bottom: 10px; color: #e67e22; border-bottom: 1px solid #333; padding-bottom: 5px; }
+        .game-screen {
+            width: 100%;
+            max-width: 420px;
+            height: 100vh;
+            max-height: 880px;
+            background: linear-gradient(to bottom, #81d4fa 0%, #aed581 40%, #558b2f 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            padding: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            border-radius: 12px;
+        }
 
-        /* Elementlər */
-        input, select, button { width: 100%; padding: 10px; margin: 5px 0; border-radius: 6px; border: none; font-size: 13px; }
-        input { background: #333; color: #fff; border: 1px solid #444; }
-        input:focus { outline: none; border-color: #f39c12; }
-        button { background: #f39c12; color: #111; font-weight: bold; cursor: pointer; transition: 0.2s; }
-        button:hover { background: #d68910; }
-        .btn-green { background: #27ae60; color: #fff; }
-        .btn-green:hover { background: #1e8449; }
-        .btn-blue { background: #2980b9; color: #fff; }
-        .btn-blue:hover { background: #1f618d; }
+        /* Top Bar Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
 
-        .flex-group { display: flex; gap: 8px; }
-        .info-text { font-size: 11px; color: #888; margin-bottom: 8px; }
+        .profile-container {
+            background: #6d4c41;
+            border: 3px solid #3e2723;
+            border-radius: 25px;
+            display: flex;
+            align-items: center;
+            padding: 2px 10px 2px 2px;
+            color: #fff;
+            position: relative;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            background: #a1887f;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            font-size: 20px;
+            border: 2px solid #fff;
+        }
+
+        .level-badge {
+            position: absolute;
+            bottom: -5px;
+            left: 12px;
+            background: #ff9800;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 11px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 1px solid #fff;
+            font-weight: bold;
+        }
+
+        .balances {
+            display: flex;
+            flex-direction: column;
+            margin-left: 10px;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .bal-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .menu-hamburger {
+            width: 40px;
+            height: 40px;
+            background: #8d6e63;
+            border: 2px solid #3e2723;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+        }
+
+        .menu-hamburger div {
+            width: 22px;
+            height: 4px;
+            background: #fff;
+            border-radius: 2px;
+        }
+
+        /* Stats Section */
+        .stats-panel {
+            background: #5d4037;
+            border: 3px solid #3e2723;
+            border-radius: 15px;
+            padding: 6px 12px;
+            margin: 8px 0;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #4e342e;
+            padding: 5px 10px;
+            border-radius: 20px;
+        }
+
+        .btn-blue {
+            background: #1e88e5;
+            color: white;
+            border: none;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-weight: bold;
+            font-size: 12px;
+        }
+
+        /* Main Game Grid Container */
+        .view-section {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+        }
+
+        .grid-board {
+            background: #6d4c41;
+            border: 4px solid #3e2723;
+            border-radius: 15px;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            padding: 10px;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+        }
+
+        .grid-cell {
+            background: #4e342e;
+            aspect-ratio: 1;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.4);
+            cursor: pointer;
+        }
+
+        .bee-img {
+            font-size: 28px;
+        }
+
+        .lvl-badge {
+            position: absolute;
+            bottom: 3px;
+            background: #4caf50;
+            color: white;
+            font-size: 9px;
+            padding: 1px 5px;
+            border-radius: 6px;
+            font-weight: bold;
+        }
+
+        /* Side Menu Buttons */
+        .side-menu {
+            position: absolute;
+            right: -5px;
+            top: 20%;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            z-index: 10;
+        }
+
+        .side-btn {
+            background: rgba(255, 255, 255, 0.85);
+            border: 2px solid #8d6e63;
+            border-radius: 20px 0 0 20px;
+            padding: 5px 10px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 11px;
+            font-weight: bold;
+            color: #3e2723;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            cursor: pointer;
+        }
+
+        /* Buy Controls */
+        .buy-panel {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .buy-info {
+            background: #5d4037;
+            border: 2px solid #3e2723;
+            border-radius: 12px;
+            width: 30%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            padding: 4px;
+        }
+
+        .buy-btn {
+            flex-grow: 1;
+            background: #4caf50;
+            border: 2px solid #2e7d32;
+            border-radius: 12px;
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px #2e7d32;
+            cursor: pointer;
+        }
+
+        .buy-btn:active {
+            box-shadow: 0 1px #2e7d32;
+            transform: translateY(3px);
+        }
+
+        /* Apiary Jar Screen Alternative */
+        .apiary-screen {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+        }
+
+        .jar-container {
+            font-size: 100px;
+            margin: 20px 0;
+            position: relative;
+        }
+
+        .sell-btn {
+            background: #2196f3;
+            color: white;
+            border: none;
+            padding: 12px 40px;
+            border-radius: 20px;
+            font-size: 16px;
+            font-weight: bold;
+            box-shadow: 0 4px #1565c0;
+            cursor: pointer;
+        }
+
+        /* Navigation Footer */
+        .navbar {
+            display: flex;
+            justify-content: space-around;
+            background: rgba(46, 125, 50, 0.8);
+            border-radius: 15px;
+            padding: 6px 2px;
+            margin-top: 8px;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: white;
+            font-size: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            opacity: 0.7;
+        }
+
+        .nav-item.active {
+            opacity: 1;
+            transform: scale(1.1);
+        }
+
+        .nav-icon {
+            font-size: 20px;
+        }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h1>🐝 Bee Farm Game</h1>
-    <p class="subtitle">Arı saxla, bal topla və Kripto qazan!</p>
-
-    <!-- Stat Kartları -->
-    <div class="grid-stats">
-        <div class="stat-card">
-            <h3>Ümumi Balans</h3>
-            <p><span id="user-coins" style="font-size:18px; color:#f1c40f;">0</span> COIN</p>
-            <span>≈ $<span id="user-usd">0.00</span> USD</span>
+<div class="game-screen">
+    <!-- Header -->
+    <div class="header">
+        <div class="profile-container">
+            <div class="avatar">Y</div>
+            <div class="level-badge" id="player-lvl">3</div>
+            <div class="balances">
+                <div class="bal-item">🍯 <span id="gold-bal">150.16</span></div>
+                <div class="bal-item">💵 <span id="cash-bal">36 874.81</span></div>
+            </div>
         </div>
-        <div class="stat-card">
-            <h3>Pətək Statistikası</h3>
-            <p><span id="bee-count" style="font-size:18px; color:#e67e22;">1</span> Arı Ailəsi</p>
-            <span style="color:#aaa;">İstehsal: <b id="prod-rate">10</b> bal/san</span>
+        <div class="menu-hamburger">
+            <div></div>
+            <div></div>
+            <div></div>
         </div>
     </div>
 
-    <!-- Pətək Oyun Sahəsi -->
-    <div class="game-area">
-        <div class="hive-icon" onclick="manualHarvest()">🍯</div>
-        <p style="font-size: 13px; color: #ccc;">Pətəkdə toplanan bal: <b id="honey-store">0</b> / <span id="max-capacity">100</span></p>
-        <div class="progress-bar-container">
-            <div class="progress-bar" id="honey-progress"></div>
+    <!-- Production Stats -->
+    <div class="stats-panel">
+        <div class="stat-row">
+            <button class="btn-blue">Level</button>
+            <span style="font-weight: bold;" id="level-percent">5.00%</span>
         </div>
-        <button onclick="collectHoney()">Balı Topla və Sat (+Coin)</button>
-        <p class="info-text" style="margin-top: 5px;">Pətəyə toxunaraq da sürətli bal yığa bilərsiniz!</p>
-    </div>
-
-    <!-- Pətəyi Təkmilləşdir -->
-    <div class="section">
-        <h3>⚡ Fermam Təkmilləşdir</h3>
-        <p class="info-text">Yeni arı ailəsi alaraq saniyəlik bal istehsalını artırın.</p>
-        <button class="btn-blue" onclick="buyBee()">Yeni Arı Ailəsi Al (Qiymət: <span id="bee-cost">100</span> Coin)</button>
-    </div>
-
-    <!-- Kalkulyator -->
-    <div class="section">
-        <h3>🧮 Məzənnə Kalkulyatoru</h3>
-        <label>Coin Məbləği:</label>
-        <input type="number" id="calc-coin" placeholder="Məsələn: 30000" oninput="calculateExchange()">
-        <p class="info-text">Məzənnə: 30,000 Coin = 3.00 USD (1 Coin = 0.0001 USD)</p>
-        <p style="font-size: 13px;">Gözlənilən Məbləğ: <strong>$<span id="calc-result">0.00</span> USD</strong></p>
-    </div>
-
-    <!-- Referal Sistemi -->
-    <div class="section">
-        <h3>👥 Referal Sistemi</h3>
-        <p class="info-text">Dəvət etdiyiniz hər dostunuza görə 20 COIN qazanın!</p>
-        <div class="flex-group">
-            <input type="text" id="ref-link" readonly value="https://beefarm.game/?ref=USER123">
-            <button style="width: 90px;" onclick="copyRefLink()">Kopyala</button>
+        <div class="stat-row">
+            <button class="btn-blue" style="background:#ff9800;">Production</button>
+            <span style="font-weight: bold;">💧 <span id="prod-rate">452.0000</span> /hour</span>
         </div>
-        <p style="font-size: 13px; margin-top: 5px;">Dəvət olunanlar: <strong id="ref-count">0</strong> nəfər</p>
-        <button class="btn-green" style="margin-top: 8px;" onclick="addReferralDemo()">Demo: Referal Əlavə Et (+20 Coin)</button>
     </div>
 
-    <!-- Swap / Dəyişdirmə -->
-    <div class="section">
-        <h3>🔄 Swap (Coin -> Kripto)</h3>
-        <label>Dəyişdiriləcək Coin:</label>
-        <input type="number" id="swap-amount" placeholder="Min: 30000">
-        <label>Valyuta:</label>
-        <select id="swap-crypto">
-            <option value="USDT">USDT (TRC20)</option>
-            <option value="TON">TON Network</option>
-            <option value="BNB">BNB Chain</option>
-        </select>
-        <button onclick="executeSwap()">Kriptoya Çevir</button>
+    <!-- MAIN VIEW AREA -->
+    <div class="view-section">
+        <!-- Side Floating Buttons -->
+        <div class="side-menu">
+            <div class="side-btn" onclick="alert('Calculator opened!')">🧮 Calculator</div>
+            <div class="side-btn" onclick="alert('Roulette spin!')">🎡 Roulette</div>
+            <div class="side-btn" onclick="alert('Tasks list!')">📋 Tasks</div>
+            <div class="side-btn" onclick="alert('Exchange menu!')">🔄 Exchanger</div>
+            <div class="side-btn" onclick="alert('Withdrawal menu!')">👛 Withdrawal</div>
+        </div>
+
+        <!-- 1. Game Grid Screen -->
+        <div id="game-view" style="display: flex; flex-direction: column;">
+            <div class="grid-board" id="grid-container">
+                <!-- 16 Cells will be generated by JS -->
+            </div>
+
+            <div class="buy-panel">
+                <div class="buy-info">
+                    <span style="font-size: 20px;">🐝</span>
+                    <span style="font-size: 10px; color: #ccc;" id="next-bee-lvl">1 LVL</span>
+                </div>
+                <button class="buy-btn" onclick="buyBee()">Buy bee (💵 <span id="bee-price">100</span>)</button>
+            </div>
+        </div>
+
+        <!-- 2. Apiary Screen -->
+        <div id="apiary-view" class="apiary-screen">
+            <div class="jar-container">🫙</div>
+            <div style="background: rgba(0,0,0,0.5); color:white; padding: 5px 15px; border-radius: 10px; margin-bottom: 10px;">
+                <span id="honey-collected">400.00</span> / 250 000
+            </div>
+            <button class="sell-btn" onclick="sellHoney()">Sell honey</button>
+        </div>
     </div>
 
-    <!-- Finans Əməliyyatları -->
-    <div class="section">
-        <h3>💳 Depozit & Çıxarış</h3>
-        <div class="flex-group">
-            <button onclick="showModal('Deposit')">Depozit Yüklə</button>
-            <button class="btn-green" onclick="showModal('Withdraw')">Çıxarış Et</button>
+    <!-- Bottom Navigation Bar -->
+    <div class="navbar">
+        <div class="nav-item" onclick="switchTab('friends')">
+            <span class="nav-icon">👥</span>
+            <span>Friends</span>
+        </div>
+        <div class="nav-item" onclick="switchTab('apiary')">
+            <span class="nav-icon">🪵</span>
+            <span>Apiary</span>
+        </div>
+        <div class="nav-item active" id="nav-game" onclick="switchTab('game')">
+            <span class="nav-icon">🐝</span>
+            <span>Game</span>
+        </div>
+        <div class="nav-item" onclick="switchTab('shop')">
+            <span class="nav-icon">🏪</span>
+            <span>Shop</span>
+        </div>
+        <div class="nav-item" onclick="switchTab('menu')">
+            <span class="nav-icon">🎛️</span>
+            <span>Menu</span>
         </div>
     </div>
 </div>
 
 <script>
-    // Oyun Dəyişənləri
-    let coins = 50; // Başlanğıc balansı
-    let honeyStore = 0;
-    let maxCapacity = 100;
-    let bees = 1;
-    let prodRate = 10; // Saniyədə istehsal olunan bal
-    let beeCost = 100;
-    let referrals = 0;
-    const COIN_TO_USD_RATE = 3 / 30000; // 30,000 Coin = 3 USD
+    // Game State
+    let cash = 36874.81;
+    let gold = 150.16;
+    let beePrice = 100;
+    let gridData = Array(16).fill(null);
+    let honeyStorage = 400.00;
 
-    // Avtomatik Bal İstehsalı (Hər saniyə)
-    setInterval(() => {
-        if (honeyStore < maxCapacity) {
-            honeyStore += prodRate;
-            if (honeyStore > maxCapacity) honeyStore = maxCapacity;
-            updateUI();
-        }
-    }, 1000);
+    // Default setup matching screenshot
+    gridData[0] = 7;
+    gridData[1] = 6;
+    gridData[2] = 5;
+    gridData[3] = 2;
+    gridData[12] = 10;
 
-    // Ekrani Yeniləyən Əsas Funksiya
-    function updateUI() {
-        document.getElementById('user-coins').innerText = Math.floor(coins).toLocaleString();
-        document.getElementById('user-usd').innerText = (coins * COIN_TO_USD_RATE).toFixed(2);
-        document.getElementById('bee-count').innerText = bees;
-        document.getElementById('prod-rate').innerText = prodRate;
-        document.getElementById('honey-store').innerText = honeyStore;
-        document.getElementById('max-capacity').innerText = maxCapacity;
-        document.getElementById('bee-cost').innerText = beeCost;
-        document.getElementById('ref-count').innerText = referrals;
+    function renderGrid() {
+        const container = document.getElementById('grid-container');
+        container.innerHTML = '';
+        
+        gridData.forEach((lvl, index) => {
+            const cell = document.createElement('div');
+            cell.className = 'grid-cell';
+            cell.onclick = () => onCellClick(index);
 
-        // Progress bar yenilənməsi
-        let percentage = (honeyStore / maxCapacity) * 100;
-        document.getElementById('honey-progress').style.width = percentage + '%';
+            if (lvl !== null) {
+                cell.innerHTML = `
+                    <div class="bee-img">🐝</div>
+                    <div class="lvl-badge">${lvl} LVL</div>
+                `;
+            }
+            container.appendChild(cell);
+        });
+
+        // Calculate production rate based on levels
+        let totalProd = gridData.reduce((acc, curr) => acc + (curr ? curr * 45 : 0), 0);
+        document.getElementById('prod-rate').innerText = totalProd.toFixed(4);
     }
 
-    // Əllə Bal Yığmaq (Pətəyə toxunaraq)
-    function manualHarvest() {
-        if (honeyStore < maxCapacity) {
-            honeyStore += 2;
-            if (honeyStore > maxCapacity) honeyStore = maxCapacity;
-            updateUI();
-        }
-    }
-
-    // Balı Satıb Coin-ə Çevirmək
-    function collectHoney() {
-        if (honeyStore <= 0) {
-            alert("Pətəkdə toplanmış bal yoxdur!");
-            return;
-        }
-        let earnedCoins = honeyStore / 10; // 10 Bal = 1 Coin
-        coins += earnedCoins;
-        alert(`${honeyStore} bal satıldı! +${earnedCoins} Coin qazandınız.`);
-        honeyStore = 0;
-        updateUI();
-    }
-
-    // Yeni Arı Ailəsi Almaq
     function buyBee() {
-        if (coins < beeCost) {
-            alert("Kifayət qədər Coin-iniz yoxdur!");
-            return;
-        }
-        coins -= beeCost;
-        bees += 1;
-        prodRate += 10;
-        maxCapacity += 50;
-        beeCost = Math.floor(beeCost * 1.5); // Növbəti arının qiyməti artır
-        updateUI();
-        alert("Təbriklər! Yeni Arı Ailəsi aldınız.");
-    }
-
-    // Kalkulyator
-    function calculateExchange() {
-        const inputCoins = parseFloat(document.getElementById('calc-coin').value) || 0;
-        const usdValue = inputCoins * COIN_TO_USD_RATE;
-        document.getElementById('calc-result').innerText = usdValue.toFixed(2);
-    }
-
-    // Referal Linkini Kopyalamaq
-    function copyRefLink() {
-        const copyText = document.getElementById("ref-link");
-        copyText.select();
-        document.execCommand("copy");
-        alert("Referal linki kopyalandı!");
-    }
-
-    // Demo Referal Əlavə
-    function addReferralDemo() {
-        referrals++;
-        coins += 20;
-        updateUI();
-        alert("Yeni referal qoşuldu! +20 Coin balansınıza əlavə olundu.");
-    }
-
-    // Swap Funksiyası
-    function executeSwap() {
-        const amount = parseFloat(document.getElementById('swap-amount').value);
-        const crypto = document.getElementById('swap-crypto').value;
-
-        if (!amount || amount < 30000) {
-            alert("Minimum Swap məbləği 30,000 Coin-dir!");
-            return;
-        }
-
-        if (amount > coins) {
-            alert("Balansınızda kifayət qədər Coin yoxdur!");
-            return;
-        }
-
-        coins -= amount;
-        const receivedUSD = amount * COIN_TO_USD_RATE;
-        updateUI();
-        alert(`Uğurla ${amount} Coin -> $${receivedUSD.toFixed(2)} dəyərində ${crypto} valyutasına swap edildi!`);
-    }
-
-    // Depozit və Çıxarış Modalı
-    function showModal(type) {
-        if (type === 'Deposit') {
-            const amount = prompt("Depozit etmək istədiyiniz məbləği daxil edin (USD):");
-            if (amount && !isNaN(amount) && amount > 0) {
-                const addedCoins = parseFloat(amount) / COIN_TO_USD_RATE;
-                coins += addedCoins;
+        if (cash >= beePrice) {
+            let emptyIndex = gridData.findIndex(slot => slot === null);
+            if (emptyIndex !== -1) {
+                cash -= beePrice;
+                gridData[emptyIndex] = 1; // Add Level 1 bee
+                beePrice = Math.floor(beePrice * 1.15); // Increase price
                 updateUI();
-                alert(`Balansınıza $${amount} (+${addedCoins.toLocaleString()} Coin) əlavə olundu.`);
+                renderGrid();
+            } else {
+                alert("Grid is full!");
             }
-        } else if (type === 'Withdraw') {
-            if (coins < 30000) {
-                alert("Çıxarış üçün minimum balansınızda 30,000 Coin olmalıdır!");
-                return;
-            }
-            const address = prompt("Kripto cüzdan ünvanınızı daxil edin (TRC20 / TON):");
-            if (address) {
-                const usdValue = (coins * COIN_TO_USD_RATE).toFixed(2);
-                alert(`Çıxarış sorğusu qəbul olundu!\nMəbləğ: $${usdValue}\nÜnvan: ${address}`);
-                coins = 0;
-                updateUI();
-            }
+        } else {
+            alert("Not enough Cash!");
         }
     }
 
-    // Ekranı Başlanğıc Vəziyyətinə Gətir
+    function onCellClick(index) {
+        // Upgrade bee logic on click
+        if (gridData[index] !== null) {
+            gridData[index] += 1;
+            renderGrid();
+        }
+    }
+
+    function updateUI() {
+        document.getElementById('cash-bal').innerText = cash.toFixed(2);
+        document.getElementById('gold-bal').innerText = gold.toFixed(2);
+        document.getElementById('bee-price').innerText = beePrice;
+        document.getElementById('honey-collected').innerText = honeyStorage.toFixed(2);
+    }
+
+    function switchTab(tabName) {
+        document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+        
+        if (tabName === 'game') {
+            document.getElementById('game-view').style.display = 'flex';
+            document.getElementById('apiary-view').style.display = 'none';
+            document.getElementById('nav-game').classList.add('active');
+        } else if (tabName === 'apiary') {
+            document.getElementById('game-view').style.display = 'none';
+            document.getElementById('apiary-view').style.display = 'flex';
+            event.currentTarget.classList.add('active');
+        } else {
+            alert(tabName.toUpperCase() + ' section coming soon!');
+        }
+    }
+
+    function sellHoney() {
+        if (honeyStorage > 0) {
+            gold += honeyStorage / 10;
+            alert(`Sold honey for ${honeyStorage / 10} Gold!`);
+            honeyStorage = 0;
+            updateUI();
+        }
+    }
+
+    // Initialize
+    renderGrid();
     updateUI();
 </script>
 
