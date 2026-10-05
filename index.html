@@ -5,11 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#f6f3e8">
   <title>Honey Haven — Grow your apiary</title>
-  <meta name="description" content="Raise bees, collect honey, and grow your apiary in Honey Haven. All resources are for gameplay only.">
+  <meta name="description" content="Raise bees, collect honey, and grow your apiary. All resources are for gameplay only.">
 
   <style>
     :root {
-      color-scheme: light;
       --paper: #f6f3e8;
       --card: #fffdf5;
       --ink: #354435;
@@ -37,14 +36,14 @@
 
     button, input { font: inherit; }
     button { cursor: pointer; }
-    button:disabled { cursor: default; opacity: .55; }
+    button:disabled { cursor: not-allowed; opacity: .55; }
     [hidden] { display: none !important; }
 
     .app {
       width: min(1180px, 100%);
       min-height: 100vh;
       margin: 0 auto;
-      padding: 0 34px 34px;
+      padding: 0 34px 35px;
     }
 
     .topbar {
@@ -52,7 +51,7 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 18px;
+      gap: 16px;
       border-bottom: 1px solid rgba(64, 83, 57, .15);
     }
 
@@ -113,7 +112,6 @@
     }
 
     .icon-button:hover { background: #e8efdd; }
-    .icon-button svg { width: 17px; height: 17px; }
 
     .layout {
       display: grid;
@@ -130,7 +128,7 @@
       align-items: center;
       justify-content: space-between;
       gap: 14px;
-      margin: 0 0 18px;
+      margin-bottom: 18px;
     }
 
     .eyebrow {
@@ -195,6 +193,7 @@
       border-radius: 50%;
       background: #ffefbb;
       color: #edbc4e;
+      font-size: 24px;
       box-shadow: 0 0 0 9px rgba(255, 241, 190, .28);
     }
 
@@ -255,6 +254,7 @@
 
     .hive-left { left: 10%; transform: scale(.85) rotate(-2deg); }
     .hive-right { right: 11%; transform: scale(1.02) rotate(2deg); }
+
     .hive-roof {
       position: absolute;
       top: 0;
@@ -372,10 +372,10 @@
       transform: translateX(-50%) rotate(-2deg);
     }
 
-    .harvest-card, .card {
+    .panel-card, .card {
       border: 1px solid var(--line);
       border-radius: 15px;
-      background: rgba(255, 253, 244, .91);
+      background: rgba(255, 253, 244, .94);
       box-shadow: 0 3px 10px rgba(69, 81, 50, .035);
     }
 
@@ -417,6 +417,7 @@
     .section-heading h2 { margin: 5px 0 0; font-size: 17px; letter-spacing: -.05em; }
     .section-heading h2 small { color: #9da58e; font: 10px var(--mono); }
     .team-note { color: #829171; font-size: 9px; }
+
     .bee-grid {
       display: grid;
       grid-template-columns: repeat(6, minmax(0, 1fr));
@@ -452,13 +453,8 @@
       text-align: center;
     }
 
-    .empty-slot { border-style: dashed; background: rgba(255,255,255,.29); color: #91a17e; }
+    .empty-slot { border-style: dashed; background: rgba(255,255,255,.29); color: #91a17e; font-size: 20px; }
     .garden-footer { display: flex; justify-content: space-between; gap: 6px; padding: 10px 2px 0; color: #89927f; font: 8px var(--mono); letter-spacing: .04em; }
-
-    .bee-tip { display: flex; gap: 10px; align-items: center; margin-top: 16px; padding: 12px 2px; border-top: 1px solid rgba(85,105,68,.12); color: #738369; }
-    .tip-mark { width: 30px; height: 30px; display: grid; place-items: center; border-radius: 10px; background: #e8eedc; }
-    .bee-tip strong { display: block; font-size: 10px; }
-    .bee-tip p { margin: 3px 0 0; color: #91998a; font-size: 9px; line-height: 1.4; }
 
     .side-column { display: grid; gap: 13px; }
     .card { padding: 16px; }
@@ -488,23 +484,13 @@
     .upgrade-art::after { width: 72px; height: 72px; left: -15px; bottom: -37px; }
     .tiny-hive { position: absolute; left: 50%; bottom: 12px; width: 50px; height: 58px; border: 2px solid #856444; border-radius: 7px 7px 12px 12px; background: #c49257; transform: translateX(-50%); }
     .tiny-hive i { display: block; height: 14px; margin: 5px 4px; border-radius: 7px; background: #dda966; }
-    .upgrade-sun { position: absolute; top: 13px; left: 19px; color: #d3a53c; }
 
     .card-copy { margin: 7px 0 12px; color: #858c7c; font-size: 10px; line-height: 1.5; }
     .price-row { display: flex; justify-content: space-between; gap: 8px; padding: 10px 0; border-top: 1px solid #ece7d4; color: #795c2e; font: 9px var(--mono); }
     .bee-shop-title { display: flex; align-items: center; justify-content: space-between; }
     .bee-shop-title svg { width: 39px; height: 35px; }
 
-    .game-note {
-      display: flex;
-      gap: 7px;
-      align-items: flex-start;
-      padding: 2px 4px;
-      color: #929889;
-      font-size: 9px;
-      line-height: 1.5;
-    }
-
+    .game-note { display: flex; gap: 7px; align-items: flex-start; padding: 2px 4px; color: #929889; font-size: 9px; line-height: 1.5; }
     .bottom-nav { display: none; }
 
     .overlay {
@@ -533,6 +519,7 @@
     .dialog-header { display: flex; align-items: start; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
     .dialog-header h2 { margin: 5px 0 0; font-size: 23px; letter-spacing: -.06em; }
     .close-button { width: 34px; height: 34px; border: 1px solid #e2ddc9; border-radius: 50%; background: #f4f1e4; color: #6c765d; font-size: 20px; }
+
     .wallet-warning { padding: 12px; border: 1px solid #e8d7a8; border-radius: 11px; background: #fff5d9; color: #806735; font-size: 10px; line-height: 1.5; }
     .wallet-warning strong { display: block; margin-bottom: 3px; font: 9px var(--mono); letter-spacing: .1em; }
     .wallet-balances { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; margin: 11px 0; }
@@ -541,6 +528,7 @@
     .wallet-balance span { display: block; color: #92937f; font: 8px var(--mono); letter-spacing: .06em; }
     .wallet-balance strong { display: block; overflow-wrap: anywhere; margin-top: 7px; color: #59684b; font: 17px var(--mono); }
     .wallet-balance small { color: #9a926f; font-size: 8px; }
+
     .wallet-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
     .wallet-action { min-width: 0; padding: 13px; border: 1px solid #e4deca; border-radius: 12px; background: #fffdf5; }
     .wallet-action h3 { margin: 0 0 4px; color: #53634a; font-size: 12px; }
@@ -554,16 +542,14 @@
     .wallet-message { min-height: 38px; margin: 10px 0 0; padding: 10px; border-radius: 9px; background: #eff1e6; color: #718064; font-size: 9px; line-height: 1.45; }
     .wallet-message.error { background: #f8ece1; color: #a35e43; }
     .wallet-message.success { background: #e9f1df; color: #567548; }
+
     .task-list { display: grid; gap: 9px; }
     .task-row { display: flex; align-items: center; gap: 10px; padding: 12px; border: 1px solid #e8e4d2; border-radius: 11px; background: #fffdf5; }
     .task-row-main { min-width: 0; flex: 1; }
     .task-row h3 { margin: 0; font-size: 12px; }
     .task-row p { margin: 3px 0 7px; color: #8d9382; font-size: 9px; }
     .task-row small { color: #89937b; font: 8px var(--mono); }
-
-    .guide-content { width: min(400px, 100%); }
-    .guide-content p { color: #6e7967; font-size: 11px; line-height: 1.55; }
-    .guide-content li { margin: 9px 0; color: #6e7967; font-size: 11px; line-height: 1.5; }
+    .guide-copy { color: #6e7967; font-size: 11px; line-height: 1.55; }
 
     footer { padding: 22px 0 8px; color: #9a9d8b; font: 8px var(--mono); letter-spacing: .08em; text-align: center; }
 
@@ -620,7 +606,11 @@
     }
 
     @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; transition-duration: .01ms !important; }
+      *, *::before, *::after {
+        scroll-behavior: auto !important;
+        animation-duration: .01ms !important;
+        transition-duration: .01ms !important;
+      }
     }
   </style>
 </head>
@@ -647,10 +637,8 @@
           <svg viewBox="0 0 20 24" aria-hidden="true"><path d="M10 1C8 5 2.5 11.2 2.5 15.2a7.5 7.5 0 0 0 15 0C17.5 11.2 12 5 10 1Z" fill="#efb82f" stroke="#b77b18" stroke-width="1.4"/><path d="M6.5 15.8c.2 1.7 1.1 2.7 2.5 3.1" stroke="#fff1af" stroke-width="1.5" stroke-linecap="round"/></svg>
           <span id="honeyBalance">54</span><small>HONEY</small>
         </div>
-        <button class="icon-button" type="button" data-open-panel="wallet" aria-label="Open demo wallet">
-          <span>Wallet</span><b aria-hidden="true">◇</b>
-        </button>
-        <button class="icon-button" type="button" id="openGuide" aria-label="Open game guide">?</button>
+        <button class="icon-button" type="button" data-action="open-panel" data-panel="wallet" aria-label="Open demo wallet"><span>Wallet</span><b aria-hidden="true">◇</b></button>
+        <button class="icon-button" type="button" data-action="open-panel" data-panel="guide" aria-label="Open game guide">?</button>
       </div>
     </header>
 
@@ -670,29 +658,26 @@
           <div class="cloud cloud-one"></div><div class="cloud cloud-two"></div>
           <div class="hill hill-back"></div><div class="hill hill-front"></div>
           <div class="scene-label"><span class="live-dot"></span> BY THE HIVES</div>
-
           <div class="hive hive-left"><div class="hive-roof"></div><div class="hive-body"><i></i><i></i><i></i></div><div class="hive-entrance"></div></div>
           <div class="hive hive-right"><div class="hive-roof"></div><div class="hive-body"><i></i><i></i><i></i></div><div class="hive-entrance"></div><div class="hive-honey"></div></div>
-
           <div class="bee-float one" aria-hidden="true">
             <svg viewBox="0 0 80 70"><ellipse cx="29" cy="22" rx="14" ry="10" fill="#d6f4e7" stroke="#526a46" stroke-width="2"/><ellipse cx="52" cy="20" rx="14" ry="10" fill="#d6f4e7" stroke="#526a46" stroke-width="2"/><ellipse cx="40" cy="42" rx="22" ry="19" fill="#ffcc48" stroke="#443c2d" stroke-width="3"/><path d="M31 26c-8 10-8 22 0 32M46 24c-6 12-6 25 0 36" stroke="#443c2d" stroke-width="7"/><circle cx="32" cy="41" r="2.6" fill="#443c2d"/><circle cx="48" cy="41" r="2.6" fill="#443c2d"/></svg>
           </div>
           <div class="bee-float two" aria-hidden="true">
             <svg viewBox="0 0 80 70"><ellipse cx="29" cy="22" rx="14" ry="10" fill="#d6f4e7" stroke="#526a46" stroke-width="2"/><ellipse cx="52" cy="20" rx="14" ry="10" fill="#d6f4e7" stroke="#526a46" stroke-width="2"/><ellipse cx="40" cy="42" rx="22" ry="19" fill="#ffcc48" stroke="#443c2d" stroke-width="3"/><path d="M31 26c-8 10-8 22 0 32M46 24c-6 12-6 25 0 36" stroke="#443c2d" stroke-width="7"/><circle cx="32" cy="41" r="2.6" fill="#443c2d"/><circle cx="48" cy="41" r="2.6" fill="#443c2d"/></svg>
           </div>
-
           <div class="jar-label">flower honey</div>
           <div class="jar" aria-hidden="true"><div class="jar-fill" id="jarFill"></div></div>
         </section>
 
-        <section class="harvest-card">
+        <section class="panel-card harvest-card">
           <div class="harvest-line">
             <div><div class="eyebrow">Honey ready in the hive</div><strong><span id="storedHoney">8</span> <small>/ <span id="storageLimit">180</span></small></strong></div>
             <span class="production">+<span id="rate">0.06</span> / sec</span>
           </div>
           <div class="progress-track" aria-label="Honey storage"><span id="storageProgress" style="width:4%"></span></div>
           <div class="collect-row">
-            <button class="primary-button" type="button" id="collectButton">Collect honey</button>
+            <button class="primary-button" type="button" data-action="collect" id="collectButton">Collect honey</button>
             <span class="collect-extra" id="collectAmount">+8</span>
           </div>
         </section>
@@ -706,10 +691,7 @@
           <div class="garden-footer"><span><span id="footerRate">0.06</span> HONEY / SEC</span><span><span id="footerBees">2</span> hardworking bees</span></div>
         </section>
 
-        <div class="bee-tip">
-          <span class="tip-mark" aria-hidden="true">✿</span>
-          <div><strong>Bee tip</strong><p>Collect honey before the hives fill so your bees can keep working.</p></div>
-        </div>
+        <div class="game-note">Progress is saved on this device. All honey and wallet controls are for gameplay only.</div>
       </section>
 
       <aside class="side-column">
@@ -719,34 +701,32 @@
             <span class="task-count" id="taskCount">0/3</span>
           </div>
           <div class="task-preview-list" id="taskPreview"></div>
-          <button class="text-link" type="button" data-open-panel="tasks">See all tasks →</button>
+          <button class="text-link" type="button" data-action="open-panel" data-panel="tasks">See all tasks →</button>
         </section>
 
         <section class="card">
-          <div class="upgrade-art"><div class="upgrade-sun">✳</div><div class="tiny-hive"><i></i><i></i><i></i></div></div>
+          <div class="upgrade-art"><div class="tiny-hive"><i></i><i></i><i></i></div></div>
           <div class="eyebrow">Grow your apiary</div>
           <h2>A roomier home.</h2>
           <p class="card-copy">Each new level stores more honey and helps your bees work more efficiently.</p>
           <div class="price-row"><span>LEVEL <span id="nextLevel">1 → 2</span></span><strong><span id="apiaryPrice">88</span> HONEY</strong></div>
-          <button class="secondary-button" style="width:100%" type="button" id="upgradeButton">Upgrade apiary</button>
+          <button class="secondary-button" style="width:100%" type="button" data-action="upgrade-apiary" id="upgradeButton">Upgrade apiary</button>
         </section>
 
         <section class="card">
           <div class="bee-shop-title"><div><div class="eyebrow">A new teammate</div><h2>Add another bee.</h2></div></div>
           <p class="card-copy">Little helpers that gather honey from flowers.</p>
           <div class="price-row"><span>WORKER BEE</span><strong><span id="beePrice">34</span> HONEY</strong></div>
-          <button class="secondary-button" style="width:100%" type="button" id="buyBeeButton">Buy bee</button>
+          <button class="secondary-button" style="width:100%" type="button" data-action="buy-bee" id="buyBeeButton">Buy bee</button>
         </section>
-
-        <div class="game-note">All honey is a game resource. Wallet controls are demo-only and do not move real funds.</div>
       </aside>
     </main>
 
     <nav class="bottom-nav" aria-label="Game sections">
-      <button type="button" data-nav="apiary" class="active"><span aria-hidden="true">⌂</span>Apiary</button>
-      <button type="button" data-nav="tasks"><span aria-hidden="true">✓</span>Tasks</button>
-      <button type="button" data-nav="shop"><span aria-hidden="true">▦</span>Shop</button>
-      <button type="button" data-nav="wallet"><span aria-hidden="true">◇</span>Wallet</button>
+      <button type="button" data-action="nav" data-panel="apiary" class="active">⌂<span>Apiary</span></button>
+      <button type="button" data-action="nav" data-panel="tasks">✓<span>Tasks</span></button>
+      <button type="button" data-action="nav" data-panel="shop">▦<span>Shop</span></button>
+      <button type="button" data-action="nav" data-panel="wallet">◇<span>Wallet</span></button>
     </nav>
 
     <footer>MAY YOUR FLOWERS BLOOM, AND YOUR HIVES FILL · YOUR LITTLE GARDEN</footer>
@@ -756,21 +736,9 @@
     <section class="dialog" role="dialog" aria-modal="true" aria-labelledby="panelTitle">
       <header class="dialog-header">
         <div><div class="eyebrow" id="panelEyebrow"></div><h2 id="panelTitle"></h2></div>
-        <button class="close-button" type="button" id="closePanel" aria-label="Close">×</button>
+        <button class="close-button" type="button" data-action="close-panel" aria-label="Close">×</button>
       </header>
       <div id="panelBody"></div>
-    </section>
-  </div>
-
-  <div class="overlay" id="guideOverlay" hidden>
-    <section class="dialog guide-content" role="dialog" aria-modal="true" aria-labelledby="guideTitle">
-      <header class="dialog-header"><div><div class="eyebrow">A little guide</div><h2 id="guideTitle">How does your apiary work?</h2></div><button class="close-button" type="button" id="closeGuide" aria-label="Close guide">×</button></header>
-      <ul>
-        <li>Your bees slowly make honey that collects in the hive.</li>
-        <li>Collect honey to add it to your game balance.</li>
-        <li>Spend game honey on more bees and apiary upgrades.</li>
-        <li>The Wallet screen is a local demo. It does not connect to a crypto wallet.</li>
-      </ul>
     </section>
   </div>
 
@@ -778,7 +746,7 @@
     (() => {
       "use strict";
 
-      const SAVE_KEY = "honey-haven-game-v1";
+      const SAVE_KEY = "honey-haven-game-v2";
       const OFFLINE_CAP_MS = 8 * 60 * 60 * 1000;
       const MAX_APIARY_LEVEL = 8;
       const DEMO_APIARY_PRICE = 0.10;
@@ -800,7 +768,7 @@
       };
 
       let game = loadGame();
-      // This balance is intentionally in memory only and resets on reload.
+      // Demo TON is intentionally held in memory only; it resets on page reload.
       let demoTon = 0;
       let currentPanel = null;
 
@@ -809,10 +777,12 @@
         const parsed = Number(value);
         return Number.isFinite(parsed) ? parsed : fallback;
       };
-      const format = (value, digits = 1) => new Intl.NumberFormat("en-US", { maximumFractionDigits: digits }).format(value);
+      const format = (value, digits = 1) =>
+        new Intl.NumberFormat("en-US", { maximumFractionDigits: digits }).format(value);
 
       function loadGame() {
         let saved = null;
+
         try {
           saved = JSON.parse(localStorage.getItem(SAVE_KEY) || "null");
         } catch {
@@ -831,7 +801,9 @@
           lifetimeHoney: Math.max(0, number(saved.lifetimeHoney)),
           bees,
           apiaryLevel: level,
-          claimedTasks: Array.isArray(saved.claimedTasks) ? saved.claimedTasks.filter((id) => typeof id === "string") : [],
+          claimedTasks: Array.isArray(saved.claimedTasks)
+            ? saved.claimedTasks.filter((id) => typeof id === "string")
+            : [],
           savedAt: number(saved.savedAt, Date.now())
         };
 
@@ -906,6 +878,7 @@
           const done = progress >= task.target;
           const claimed = game.claimedTasks.includes(task.id);
           const status = done ? (claimed ? "Reward claimed" : "Claim your reward") : `${progress}/${task.target}`;
+
           return `<div class="task-preview-row">
             <span class="task-dot ${done ? "done" : ""}">${done ? "✓" : "•"}</span>
             <div class="task-preview-text"><strong>${task.title}</strong><small>${status}</small></div>
@@ -914,23 +887,28 @@
         }).join("");
       }
 
-      function syncWalletNumbers() {
+      function updateWalletNumbers() {
         if (byId("walletHoney")) byId("walletHoney").textContent = format(game.honey);
         if (byId("demoTonBalance")) byId("demoTonBalance").textContent = demoTon.toFixed(4);
-        if (byId("walletApiaryLevel")) byId("walletApiaryLevel").textContent = `${game.apiaryLevel} / ${MAX_APIARY_LEVEL}`;
-        if (byId("demoApiaryPrice")) byId("demoApiaryPrice").textContent = `${DEMO_APIARY_PRICE.toFixed(2)} Demo TON`;
+        if (byId("walletApiaryLevel")) {
+          byId("walletApiaryLevel").textContent = `${game.apiaryLevel} / ${MAX_APIARY_LEVEL}`;
+        }
+        if (byId("demoApiaryPrice")) {
+          byId("demoApiaryPrice").textContent = `${DEMO_APIARY_PRICE.toFixed(2)} Demo TON`;
+        }
         if (byId("buyDemoApiary")) {
-          byId("buyDemoApiary").disabled = game.apiaryLevel >= MAX_APIARY_LEVEL;
-          byId("buyDemoApiary").textContent = game.apiaryLevel >= MAX_APIARY_LEVEL ? "Maximum level reached" : "Buy demo upgrade";
+          const button = byId("buyDemoApiary");
+          button.disabled = game.apiaryLevel >= MAX_APIARY_LEVEL;
+          button.textContent = game.apiaryLevel >= MAX_APIARY_LEVEL
+            ? "Maximum level reached"
+            : "Buy demo upgrade";
         }
       }
 
-      function render() {
+      function renderGame() {
         const limit = storageLimit();
         const rate = production();
         const percent = Math.min(100, game.storedHoney / limit * 100);
-        const nextBee = beePrice();
-        const nextApiary = apiaryPrice();
 
         byId("honeyBalance").textContent = format(game.honey);
         byId("apiaryLevel").textContent = String(game.apiaryLevel).padStart(2, "0");
@@ -940,22 +918,28 @@
         byId("footerRate").textContent = rate.toFixed(2);
         byId("storageProgress").style.width = `${percent}%`;
         byId("jarFill").style.height = `${Math.max(10, percent)}%`;
-        byId("collectAmount").textContent = game.storedHoney >= 1 ? `+${Math.floor(game.storedHoney)}` : "bees are working";
+        byId("collectAmount").textContent = game.storedHoney >= 1
+          ? `+${Math.floor(game.storedHoney)}`
+          : "bees are working";
         byId("collectButton").disabled = game.storedHoney < 1;
 
         byId("beeCount").textContent = `${game.bees.length}/36`;
         byId("footerBees").textContent = String(game.bees.length);
-        byId("apiaryPrice").textContent = String(nextApiary);
-        byId("beePrice").textContent = String(nextBee);
-        byId("nextLevel").textContent = game.apiaryLevel >= MAX_APIARY_LEVEL ? "MAX LEVEL" : `${game.apiaryLevel} → ${game.apiaryLevel + 1}`;
+        byId("apiaryPrice").textContent = String(apiaryPrice());
+        byId("beePrice").textContent = String(beePrice());
+        byId("nextLevel").textContent = game.apiaryLevel >= MAX_APIARY_LEVEL
+          ? "MAX LEVEL"
+          : `${game.apiaryLevel} → ${game.apiaryLevel + 1}`;
 
-        byId("upgradeButton").disabled = game.honey < nextApiary || game.apiaryLevel >= MAX_APIARY_LEVEL;
-        byId("upgradeButton").textContent = game.apiaryLevel >= MAX_APIARY_LEVEL ? "Maximum level reached" : "Upgrade apiary";
-        byId("buyBeeButton").disabled = game.honey < nextBee || game.bees.length >= 36;
+        byId("upgradeButton").disabled =
+          game.honey < apiaryPrice() || game.apiaryLevel >= MAX_APIARY_LEVEL;
+        byId("upgradeButton").textContent =
+          game.apiaryLevel >= MAX_APIARY_LEVEL ? "Maximum level reached" : "Upgrade apiary";
+        byId("buyBeeButton").disabled = game.honey < beePrice() || game.bees.length >= 36;
 
         renderBeeGrid();
         renderTaskPreview();
-        syncWalletNumbers();
+        updateWalletNumbers();
         saveGame();
       }
 
@@ -965,7 +949,7 @@
         game.honey += amount;
         game.lifetimeHoney += amount;
         game.storedHoney = 0;
-        render();
+        renderGame();
       }
 
       function buyBee() {
@@ -973,7 +957,8 @@
         if (game.honey < price || game.bees.length >= 36) return;
         game.honey -= price;
         game.bees.push(1);
-        render();
+        renderGame();
+        if (currentPanel === "shop") renderPanel("shop");
       }
 
       function upgradeApiary() {
@@ -981,61 +966,18 @@
         if (game.honey < price || game.apiaryLevel >= MAX_APIARY_LEVEL) return;
         game.honey -= price;
         game.apiaryLevel += 1;
-        render();
+        renderGame();
+        if (currentPanel === "shop") renderPanel("shop");
       }
 
       function claimTask(taskId) {
         const task = TASKS.find((item) => item.id === taskId);
         if (!task || game.claimedTasks.includes(taskId) || taskProgress(task) < task.target) return;
+
         game.honey += task.reward;
         game.claimedTasks.push(taskId);
-        render();
-      }
-
-      function walletPanelMarkup() {
-        return `
-          <div class="wallet-warning">
-            <strong>DEMO ONLY — NO REAL TON</strong>
-            This is a local game simulation. It does not connect to a wallet or blockchain, and it cannot send, receive, or exchange real cryptocurrency. Demo TON resets when you reload.
-          </div>
-          <div class="wallet-balances">
-            <div class="wallet-balance"><span>COLLECTED GAME HONEY</span><strong><span id="walletHoney">0</span> <small>HONEY</small></strong></div>
-            <div class="wallet-balance demo"><span>LOCAL DEMO BALANCE</span><strong><span id="demoTonBalance">0.0000</span> <small>DEMO TON</small></strong></div>
-          </div>
-          <div class="wallet-level"><span>YOUR APIARY LEVEL</span><strong id="walletApiaryLevel">1 / 8</strong></div>
-          <div class="wallet-grid">
-            <form class="wallet-action" id="demoDepositForm">
-              <h3>Demo deposit</h3>
-              <p>Add fictional Demo TON to the local balance. No funds are received.</p>
-              <label for="depositAmount">Amount in Demo TON</label>
-              <input id="depositAmount" name="amount" type="number" min="0.0001" step="0.0001" required placeholder="0.0000">
-              <button class="secondary-button" type="submit">Add demo balance</button>
-            </form>
-            <form class="wallet-action" id="demoWithdrawForm">
-              <h3>Demo withdrawal</h3>
-              <p>Remove fictional Demo TON from the local balance. Nothing is sent.</p>
-              <label for="withdrawAmount">Amount in Demo TON</label>
-              <input id="withdrawAmount" name="amount" type="number" min="0.0001" step="0.0001" required placeholder="0.0000">
-              <button class="secondary-button" type="submit">Withdraw demo balance</button>
-            </form>
-            <form class="wallet-action" id="demoSwapForm">
-              <h3>Honey swap</h3>
-              <p>Convert collected game honey into fictional Demo TON for this preview.</p>
-              <label for="swapAmount">Collected honey amount</label>
-              <input id="swapAmount" name="amount" type="number" min="100" step="100" required placeholder="100">
-              <div class="wallet-quote">UI-only sample: 100 honey = 0.01 Demo TON</div>
-              <button class="secondary-button" type="submit">Swap in demo</button>
-            </form>
-            <section class="wallet-action">
-              <h3>Demo apiary upgrade</h3>
-              <p>Use fictional Demo TON to increase your apiary level.</p>
-              <div class="wallet-level"><span>LEVEL</span><strong id="walletApiaryLevelCard">1 / 8</strong></div>
-              <div class="wallet-quote">Fixed demo price: <strong id="demoApiaryPrice">0.10 Demo TON</strong></div>
-              <button class="secondary-button" type="button" id="buyDemoApiary">Buy demo upgrade</button>
-            </section>
-          </div>
-          <p class="wallet-message" id="walletMessage" role="status" aria-live="polite">Demo-only controls are ready. No real transaction occurred.</p>
-        `;
+        renderGame();
+        if (currentPanel === "tasks") renderPanel("tasks");
       }
 
       function setWalletMessage(message, kind = "") {
@@ -1045,28 +987,107 @@
         output.textContent = `${message} No real transaction occurred.`;
       }
 
-      function openPanel(panelName) {
+      function walletPanelMarkup() {
+        return `
+          <div class="wallet-warning">
+            <strong>DEMO ONLY — NO REAL TON</strong>
+            This local simulation does not connect to a wallet or blockchain. It cannot send, receive, or exchange real cryptocurrency. Demo TON resets when you reload.
+          </div>
+
+          <div class="wallet-balances">
+            <div class="wallet-balance">
+              <span>COLLECTED GAME HONEY</span>
+              <strong><span id="walletHoney">0</span> <small>HONEY</small></strong>
+            </div>
+            <div class="wallet-balance demo">
+              <span>LOCAL DEMO BALANCE</span>
+              <strong><span id="demoTonBalance">0.0000</span> <small>DEMO TON</small></strong>
+            </div>
+          </div>
+
+          <div class="wallet-level">
+            <span>YOUR APIARY LEVEL</span>
+            <strong id="walletApiaryLevel">1 / 8</strong>
+          </div>
+
+          <div class="wallet-grid">
+            <form class="wallet-action" id="demoDepositForm">
+              <h3>Demo deposit</h3>
+              <p>Add fictional Demo TON to the local balance. No funds are received.</p>
+              <label for="depositAmount">Amount in Demo TON</label>
+              <input id="depositAmount" name="amount" type="number" min="0.0001" step="0.0001" required placeholder="0.0000">
+              <button class="secondary-button" type="submit">Add demo balance</button>
+            </form>
+
+            <form class="wallet-action" id="demoWithdrawForm">
+              <h3>Demo withdrawal</h3>
+              <p>Remove fictional Demo TON from the local balance. Nothing is sent.</p>
+              <label for="withdrawAmount">Amount in Demo TON</label>
+              <input id="withdrawAmount" name="amount" type="number" min="0.0001" step="0.0001" required placeholder="0.0000">
+              <button class="secondary-button" type="submit">Withdraw demo balance</button>
+            </form>
+
+            <form class="wallet-action" id="demoSwapForm">
+              <h3>Honey swap</h3>
+              <p>Convert collected game honey into fictional Demo TON for this preview.</p>
+              <label for="swapAmount">Collected honey amount</label>
+              <input id="swapAmount" name="amount" type="number" min="100" step="100" required placeholder="100">
+              <div class="wallet-quote">UI-only sample: 100 honey = 0.01 Demo TON</div>
+              <button class="secondary-button" type="submit">Swap in demo</button>
+            </form>
+
+            <section class="wallet-action">
+              <h3>Demo apiary upgrade</h3>
+              <p>Use fictional Demo TON to increase your apiary level.</p>
+              <div class="wallet-level"><span>LEVEL</span><strong id="walletApiaryLevelCard">1 / 8</strong></div>
+              <div class="wallet-quote">Fixed demo price: <strong id="demoApiaryPrice">0.10 Demo TON</strong></div>
+              <button class="secondary-button" type="button" id="buyDemoApiary" data-action="buy-demo-apiary">Buy demo upgrade</button>
+            </section>
+          </div>
+
+          <p class="wallet-message" id="walletMessage" role="status" aria-live="polite">
+            Demo-only controls are ready. No real transaction occurred.
+          </p>
+        `;
+      }
+
+      function renderPanel(panelName) {
         currentPanel = panelName;
-        const overlay = byId("panelOverlay");
-        const body = byId("panelBody");
         const eyebrow = byId("panelEyebrow");
         const title = byId("panelTitle");
+        const body = byId("panelBody");
 
         if (panelName === "wallet") {
           eyebrow.textContent = "DEMO ONLY · NO REAL TON";
           title.textContent = "Demo wallet";
           body.innerHTML = walletPanelMarkup();
-          syncWalletNumbers();
+          updateWalletNumbers();
         } else if (panelName === "shop") {
           eyebrow.textContent = "APIARY SUPPLIES";
           title.textContent = "Little shop";
           body.innerHTML = `
             <p class="card-copy">Spend game honey to grow your apiary.</p>
             <div class="task-list">
-              <article class="task-row"><div class="task-row-main"><h3>Worker bee</h3><p>Add one bee to your team.</p><small>${beePrice()} HONEY</small></div><button class="secondary-button" type="button" data-action="buy-bee">Buy bee</button></article>
-              <article class="task-row"><div class="task-row-main"><h3>Roomier apiary</h3><p>Increase storage and productivity.</p><small>${apiaryPrice()} HONEY</small></div><button class="secondary-button" type="button" data-action="upgrade-apiary">Upgrade</button></article>
+              <article class="task-row">
+                <div class="task-row-main"><h3>Worker bee</h3><p>Add one bee to your team.</p><small>${beePrice()} HONEY</small></div>
+                <button class="secondary-button" type="button" data-action="buy-bee" ${game.honey < beePrice() || game.bees.length >= 36 ? "disabled" : ""}>Buy bee</button>
+              </article>
+              <article class="task-row">
+                <div class="task-row-main"><h3>Roomier apiary</h3><p>Increase storage and productivity.</p><small>${apiaryPrice()} HONEY</small></div>
+                <button class="secondary-button" type="button" data-action="upgrade-apiary" ${game.honey < apiaryPrice() || game.apiaryLevel >= MAX_APIARY_LEVEL ? "disabled" : ""}>Upgrade</button>
+              </article>
             </div>
             <p class="wallet-message">Shop purchases use game honey only. They are not crypto transactions.</p>
+          `;
+        } else if (panelName === "guide") {
+          eyebrow.textContent = "A LITTLE GUIDE";
+          title.textContent = "How does your apiary work?";
+          body.innerHTML = `
+            <div class="guide-copy">
+              <p>Your bees slowly make honey that collects in the hive. Collect it before the storage is full.</p>
+              <p>Spend game honey on more bees and apiary upgrades. Your progress is saved on this device.</p>
+              <p>The Wallet screen is a local demo only. It does not connect to a crypto wallet or move real funds.</p>
+            </div>
           `;
         } else {
           eyebrow.textContent = "ONE STEP AT A TIME";
@@ -1075,17 +1096,27 @@
             const progress = taskProgress(task);
             const done = progress >= task.target;
             const claimed = game.claimedTasks.includes(task.id);
+            const status = claimed
+              ? `<span class="task-count">Claimed</span>`
+              : done
+                ? `<button class="secondary-button" type="button" data-action="claim-task" data-task="${task.id}">+${task.reward} honey</button>`
+                : `<span class="task-count">${progress}/${task.target}</span>`;
+
             return `<article class="task-row">
-              <div class="task-row-main"><h3>${String(index + 1).padStart(2, "0")} · ${task.title}</h3><p>${task.detail}</p><small>${progress}/${task.target} · Reward: ${task.reward} honey</small></div>
-              ${done ? `<button class="secondary-button" type="button" data-action="claim-task" data-task="${task.id}" ${claimed ? "disabled" : ""}>${claimed ? "Claimed" : `+${task.reward} honey`}</button>` : `<span class="task-count">Locked</span>`}
+              <div class="task-row-main">
+                <h3>${String(index + 1).padStart(2, "0")} · ${task.title}</h3>
+                <p>${task.detail}</p>
+                <small>${progress}/${task.target} · Reward: ${task.reward} honey</small>
+              </div>
+              ${status}
             </article>`;
           }).join("")}</div>`;
         }
 
-        overlay.hidden = false;
+        byId("panelOverlay").hidden = false;
         document.body.style.overflow = "hidden";
-        document.querySelectorAll("[data-nav]").forEach((button) => {
-          button.classList.toggle("active", button.dataset.nav === panelName);
+        document.querySelectorAll("[data-panel-nav]").forEach((button) => {
+          button.classList.toggle("active", button.dataset.panelNav === panelName);
         });
       }
 
@@ -1093,64 +1124,35 @@
         byId("panelOverlay").hidden = true;
         document.body.style.overflow = "";
         currentPanel = null;
-        document.querySelectorAll("[data-nav]").forEach((button) => {
-          button.classList.toggle("active", button.dataset.nav === "apiary");
+        document.querySelectorAll("[data-panel-nav]").forEach((button) => {
+          button.classList.toggle("active", button.dataset.panelNav === "apiary");
         });
       }
 
-      byId("collectButton").addEventListener("click", collectHoney);
-      byId("buyBeeButton").addEventListener("click", buyBee);
-      byId("upgradeButton").addEventListener("click", upgradeApiary);
-
-      byId("beeGrid").addEventListener("click", (event) => {
-        if (event.target.closest('[data-action="buy-bee"]')) buyBee();
-      });
-
-      document.querySelectorAll("[data-open-panel]").forEach((button) => {
-        button.addEventListener("click", () => openPanel(button.dataset.openPanel));
-      });
-
-      document.querySelectorAll("[data-nav]").forEach((button) => {
-        button.addEventListener("click", () => {
-          const destination = button.dataset.nav;
-          if (destination === "apiary") closePanel();
-          else openPanel(destination);
-        });
-      });
-
-      byId("panelBody").addEventListener("click", (event) => {
-        const button = event.target.closest("[data-action]");
-        if (!button) return;
-
-        if (button.dataset.action === "buy-bee") {
-          buyBee();
-          openPanel("shop");
-        } else if (button.dataset.action === "upgrade-apiary") {
-          upgradeApiary();
-          openPanel("shop");
-        } else if (button.dataset.action === "claim-task") {
-          claimTask(button.dataset.task);
-          openPanel("tasks");
-        } else if (button.dataset.action === "buy-demo-apiary") {
-          if (game.apiaryLevel >= MAX_APIARY_LEVEL) {
-            setWalletMessage("Your apiary is already at its maximum level.", "error");
-          } else if (demoTon < DEMO_APIARY_PRICE) {
-            setWalletMessage("You need more Demo TON for this demo upgrade.", "error");
-          } else {
-            demoTon = Math.round((demoTon - DEMO_APIARY_PRICE) * 10000) / 10000;
-            game.apiaryLevel += 1;
-            render();
-            setWalletMessage(`Demo apiary upgrade completed. Your apiary is now level ${game.apiaryLevel}.`, "success");
-          }
+      function buyDemoApiary() {
+        if (game.apiaryLevel >= MAX_APIARY_LEVEL) {
+          setWalletMessage("Your apiary is already at its maximum level.", "error");
+          return;
         }
-      });
 
-      byId("panelBody").addEventListener("submit", (event) => {
+        if (demoTon < DEMO_APIARY_PRICE) {
+          setWalletMessage("You need more Demo TON for this demo upgrade.", "error");
+          return;
+        }
+
+        demoTon = Math.round((demoTon - DEMO_APIARY_PRICE) * 10000) / 10000;
+        game.apiaryLevel += 1;
+        renderGame();
+        setWalletMessage(`Demo apiary upgrade completed. Your apiary is now level ${game.apiaryLevel}.`, "success");
+      }
+
+      function handleWalletForm(event) {
         const form = event.target;
         if (!(form instanceof HTMLFormElement)) return;
-        event.preventDefault();
 
+        event.preventDefault();
         const amount = Number(new FormData(form).get("amount"));
+
         if (!Number.isFinite(amount) || amount <= 0) {
           setWalletMessage("Enter an amount greater than zero.", "error");
           return;
@@ -1159,67 +1161,95 @@
         if (form.id === "demoDepositForm") {
           demoTon = Math.round((demoTon + amount) * 10000) / 10000;
           form.reset();
-          render();
+          renderGame();
           setWalletMessage("Demo deposit added to the local balance.", "success");
-        } else if (form.id === "demoWithdrawForm") {
+          return;
+        }
+
+        if (form.id === "demoWithdrawForm") {
           if (amount > demoTon) {
             setWalletMessage("That amount is greater than your Demo TON balance.", "error");
             return;
           }
+
           demoTon = Math.round((demoTon - amount) * 10000) / 10000;
           form.reset();
-          render();
+          renderGame();
           setWalletMessage("Demo withdrawal preview completed.", "success");
-        } else if (form.id === "demoSwapForm") {
+          return;
+        }
+
+        if (form.id === "demoSwapForm") {
           if (amount < 100) {
             setWalletMessage("Enter at least 100 honey for this demo swap.", "error");
             return;
           }
+
           if (amount > game.honey) {
             setWalletMessage("You do not have enough collected game honey.", "error");
             return;
           }
+
           const received = amount / 10000;
           game.honey -= amount;
           demoTon = Math.round((demoTon + received) * 10000) / 10000;
           form.reset();
-          render();
-          setWalletMessage(`${format(amount)} game honey swapped for ${received.toFixed(4)} Demo TON at the sample rate.`, "success");
+          renderGame();
+          setWalletMessage(
+            `${format(amount)} game honey swapped for ${received.toFixed(4)} Demo TON at the sample rate.`,
+            "success"
+          );
+        }
+      }
+
+      document.addEventListener("click", (event) => {
+        const target = event.target;
+        if (!(target instanceof Element)) return;
+
+        const button = target.closest("button[data-action]");
+        if (!button || button.disabled) return;
+
+        const action = button.dataset.action;
+
+        if (action === "collect") {
+          collectHoney();
+        } else if (action === "buy-bee") {
+          buyBee();
+        } else if (action === "upgrade-apiary") {
+          upgradeApiary();
+        } else if (action === "claim-task") {
+          claimTask(button.dataset.task);
+        } else if (action === "buy-demo-apiary") {
+          buyDemoApiary();
+        } else if (action === "open-panel") {
+          renderPanel(button.dataset.panel);
+        } else if (action === "close-panel") {
+          closePanel();
+        } else if (action === "nav") {
+          const destination = button.dataset.panel;
+          if (destination === "apiary") closePanel();
+          else renderPanel(destination);
         }
       });
+
+      byId("panelBody").addEventListener("submit", handleWalletForm);
 
       byId("panelOverlay").addEventListener("click", (event) => {
         if (event.target === byId("panelOverlay")) closePanel();
       });
-      byId("closePanel").addEventListener("click", closePanel);
 
-      byId("openGuide").addEventListener("click", () => {
-        byId("guideOverlay").hidden = false;
-        document.body.style.overflow = "hidden";
-      });
-      byId("closeGuide").addEventListener("click", () => {
-        byId("guideOverlay").hidden = true;
-        document.body.style.overflow = "";
-      });
-      byId("guideOverlay").addEventListener("click", (event) => {
-        if (event.target === byId("guideOverlay")) {
-          byId("guideOverlay").hidden = true;
-          document.body.style.overflow = "";
-        }
-      });
       document.addEventListener("keydown", (event) => {
-        if (event.key === "Escape") {
-          closePanel();
-          byId("guideOverlay").hidden = true;
-          document.body.style.overflow = "";
-        }
+        if (event.key === "Escape") closePanel();
       });
 
-      render();
+      renderGame();
+
       window.setInterval(() => {
-        const rate = production();
-        game.storedHoney = Math.min(storageLimit(), game.storedHoney + rate);
-        render();
+        game.storedHoney = Math.min(
+          storageLimit(),
+          game.storedHoney + production()
+        );
+        renderGame();
       }, 1000);
     })();
   </script>
