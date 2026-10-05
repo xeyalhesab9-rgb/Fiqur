@@ -225,6 +225,10 @@ nav{
   z-index:50;
 }
 
+nav.admin-mode{
+  grid-template-columns:repeat(5,1fr);
+}
+
 nav button{
   background:transparent;
   font-size:12px;
@@ -490,35 +494,27 @@ nav button.active{
 
 </section>
 
-<!-- ADMIN -->
+<!-- ADMIN SECTION -->
 <section id="admin" class="page">
 
 <div class="card admin">
   <h2>🔐 Admin Panel</h2>
+  <p class="small">Pending Deposit & Withdrawal Requests</p>
+  <button class="secondary" onclick="loadAdminRequests()" style="width:100%; margin-bottom:12px;">🔄 Refresh Requests</button>
 
-  <p class="small">
-    Admin actions must be validated server-side with Supabase.
-  </p>
-
-  <label>Telegram User ID</label>
-  <input id="adminUserId" placeholder="User ID">
-
-  <label>Amount TON</label>
-  <input id="adminAmount" type="number" step="0.01">
-
-  <div class="actions">
-    <button class="primary" onclick="adminApprove()">Approve</button>
-    <button class="danger" onclick="adminReject()">Reject</button>
+  <div id="adminRequestsList">
+    <p class="small">Loading requests...</p>
   </div>
 </div>
 
 </section>
 
-<nav>
+<nav id="navBar">
   <button id="navHome" class="active" onclick="showPage('home',this)">🏠<br>Home</button>
   <button onclick="showPage('tasks',this)">🎯<br>Tasks</button>
   <button onclick="showPage('walletPage',this)">💎<br>Wallet</button>
   <button onclick="showPage('profile',this)">👤<br>Profile</button>
+  <button id="adminNavBtn" style="display:none;" onclick="showPage('admin',this)">🔐<br>Admin</button>
 </nav>
 
 </div>
@@ -531,31 +527,32 @@ nav button.active{
    Telegram Mini App + Local Game + Supabase
    ========================================================= */
 
+const ADMIN_TELEGRAM_ID = "8591374417";
+
 /* ---------- SUPABASE ---------- */
 
 const SUPABASE_URL =
   "https://epqezzyihzftupzpeqrg.supabase.co";
 
-/*
-  BURAYA YALNIZCA SUPABASE ANON/PUBLISHABLE KEY YAZ.
-
-  service_role KEY YAZMA!
-*/
 const SUPABASE_ANON_KEY =
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVwcWV6enlpaHpmdHVwenBlcXJnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTEyMTk1MjUsImV4cCI6MjEwNjc5NTUyNX0.Thv1hUPlyO7Jfo0dgKmEt1AX7c7vs5QllDBnPmlhw-o";
 
 let supabaseClient = null;
 
-if(
-  SUPABASE_URL &&
-  SUPABASE_ANON_KEY &&
-  !SUPABASE_ANON_KEY.includes("YOUR_")
-){
-  supabaseClient =
-    window.supabase.createClient(
+try {
+  if (
+    SUPABASE_URL &&
+    SUPABASE_ANON_KEY &&
+    !SUPABASE_ANON_KEY.includes("YOUR_") &&
+    window.supabase
+  ) {
+    supabaseClient = window.supabase.createClient(
       SUPABASE_URL,
       SUPABASE_ANON_KEY
     );
+  }
+} catch (e) {
+  console.log("Supabase initialization error:", e);
 }
 
 /* ---------- TELEGRAM ---------- */
@@ -671,6 +668,11 @@ function setupUser(){
     document.getElementById("telegramId")
       .textContent =
       "Telegram ID: " + user.id;
+
+    if(String(user.id) === ADMIN_TELEGRAM_ID) {
+      document.getElementById("adminNavBtn").style.display = "block";
+      document.getElementById("navBar").classList.add("admin-mode");
+    }
 
   }else{
 
@@ -1183,6 +1185,10 @@ function showPage(id, button){
     top:0,
     behavior:"smooth"
   });
+
+  if (id === 'admin') {
+    loadAdminRequests();
+  }
 }
 
 /* ---------- TOAST ---------- */
@@ -1369,20 +1375,107 @@ async function loadFromSupabase(){
   }
 }
 
-/* ---------- ADMIN UI ---------- */
+/* ---------- ADMIN LOGIC ---------- */
 
-function adminApprove(){
+async function loadAdminRequests() {
+  const user = getTelegramUser();
+  if(!user || String(user.id) !== ADMIN_TELEGRAM_ID) return;
 
-  toast(
-    "Admin approval must be handled by a secure Supabase Edge Function."
-  );
+  const container = document.getElementById("adminRequestsList");
+  if (!supabaseClient) {
+    container.innerHTML = "<p class='small'>Supabase client not connected.</p>";
+    return;
+  }
+
+  container.innerHTML = "<p class='small'>Loading requests...</p>";
+
+  try {
+    const { data: users, error } = await supabaseClient
+      .from("telegram_users")
+      .select("telegram_id, username, first_name, game_state, wallet_address");
+
+    if (error) throw error;
+
+    let requests = [];
+
+    users.forEach(u => {
+      if (u.game_state && u.game_state.transactions) {
+        u.game_state.transactions.forEach(tx => {
+          if (tx.status === "pending") {
+            requests.push({
+              telegram_id: u.telegram_id,
+              name: u.first_name || u.username || u.telegram_id,
+              wallet: u.wallet_address || u.game_state.walletAddress || "N/A",
+              tx: tx,
+              full_state: u.game_state
+            });
+          }
+        });
+      }
+    });
+
+    if (requests.length === 0) {
+      container.innerHTML = "<p class='small'>No pending requests found.</p>";
+      return;
+    }
+
+    container.innerHTML = requests.map(req => `
+      <div style="border-bottom: 1px solid #ddd; padding: 10px 0;">
+        <b>User:</b> ${req.name} (ID: ${req.telegram_id})<br>
+        <b>Type:</b> ${req.tx.type.toUpperCase()}<br>
+        <b>Amount:</b> ${req.tx.amount} TON<br>
+        <b>Wallet:</b> <small>${req.wallet}</small><br>
+        ${req.tx.hash ? `<b>Hash:</b> <small>${req.tx.hash}</small><br>` : ''}
+        <div class="actions" style="margin-top:8px;">
+          <button class="primary" onclick="processAdminAction(${req.telegram_id}, '${req.tx.id}', 'approved')">Approve</button>
+          <button class="danger" onclick="processAdminAction(${req.telegram_id}, '${req.tx.id}', 'rejected')">Reject</button>
+        </div>
+      </div>
+    `).join("");
+
+  } catch (err) {
+    console.error(err);
+    container.innerHTML = "<p class='small'>Error loading requests.</p>";
+  }
 }
 
-function adminReject(){
+async function processAdminAction(telegramId, txId, newStatus) {
+  try {
+    const { data, error } = await supabaseClient
+      .from("telegram_users")
+      .select("game_state")
+      .eq("telegram_id", telegramId)
+      .single();
 
-  toast(
-    "Admin rejection must be handled server-side."
-  );
+    if (error || !data) {
+      toast("User data not found!");
+      return;
+    }
+
+    let updatedState = data.game_state;
+    if (updatedState && updatedState.transactions) {
+      updatedState.transactions = updatedState.transactions.map(tx => {
+        if (tx.id === txId) {
+          return { ...tx, status: newStatus };
+        }
+        return tx;
+      });
+    }
+
+    const { error: updateError } = await supabaseClient
+      .from("telegram_users")
+      .update({ game_state: updatedState })
+      .eq("telegram_id", telegramId);
+
+    if (updateError) throw updateError;
+
+    toast(`Request ${newStatus}!`);
+    loadAdminRequests();
+
+  } catch (err) {
+    console.error(err);
+    toast("Action failed!");
+  }
 }
 
 /* ---------- AUTO PRODUCTION ---------- */
@@ -1443,4 +1536,4 @@ if(tg){
 </script>
 
 </body>
-    </html>
+</html>
